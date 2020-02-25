@@ -1,6 +1,9 @@
+# Image
+IMAGE=theiaide/theia-cpp:next
+
 # Create container and get ID
 echo "Creating container"
-CONTAINER_ID="$(docker create --security-opt seccomp=unconfined --init -it -p 3000:3000 -u `id -u`:`id -g` -v ~:/home/project:cached theiaide/theia-cpp:next)"
+CONTAINER_ID="$(docker create --security-opt seccomp=unconfined --init -it -p 3000:3000 -u `id -u`:`id -g` -v ~:/home/project:cached $IMAGE)"
 echo "CONTAINER_ID: $CONTAINER_ID"
 
 # Copy files from container
