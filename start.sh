@@ -1,8 +1,8 @@
 # Image
-IMAGE=theiaide/theia-cpp:next
+IMAGE=theia-sierra-glibc
 
 # Create container and get ID
-echo "Creating container"
+echo "Creating container from $IMAGE image"
 CONTAINER_ID="$(docker create --security-opt seccomp=unconfined --init -it -p 3000:3000 -u `id -u`:`id -g` -v ~:/home/project:cached $IMAGE)"
 echo "CONTAINER_ID: $CONTAINER_ID"
 
@@ -22,7 +22,7 @@ docker cp passwd $CONTAINER_ID:/etc/
 docker cp group $CONTAINER_ID:/etc/
 
 # Remove files
-echo "Removing files"
+echo "Removing local files"
 rm passwd group
 
 # Start container
