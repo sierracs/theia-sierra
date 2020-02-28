@@ -10,8 +10,8 @@ ENV NODE_VERSION $NODE_VERSION
 ENV YARN_VERSION 1.13.0
 
 # use "latest" or "next" version for Theia packages
-ARG version=latest
-# ARG version=sierra
+# ARG version=latest
+ARG version=sierra
 
 # Optionally build a striped Theia application with no map file or .ts sources.
 # Makes image ~150MB smaller when enabled
@@ -24,8 +24,8 @@ RUN apt-get update && \
     apt-get -y install build-essential \
                        curl \
                        git \
-                       gpg \
                        python \
+                       gpg \
                        wget \
                        xz-utils && \
     rm -rf /var/lib/apt/lists/* && \
