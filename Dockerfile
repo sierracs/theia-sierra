@@ -10,8 +10,8 @@ ENV NODE_VERSION $NODE_VERSION
 ENV YARN_VERSION 1.13.0
 
 # use "latest" or "next" version for Theia packages
-# ARG version=latest
-ARG version=sierra
+ARG version=latest
+# ARG version=sierra
 
 # Optionally build a striped Theia application with no map file or .ts sources.
 # Makes image ~150MB smaller when enabled
@@ -28,11 +28,11 @@ RUN apt-get update && \
                        python \
                        wget \
                        xz-utils && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    apt-get clean
 
 #Install node and yarn
 #From: https://github.com/nodejs/docker-node/blob/6b8d86d6ad59e0d1e7a94cec2e909cad137a028f/8/Dockerfile
-
 # gpg keys listed at https://github.com/nodejs/node#release-keys
 RUN set -ex \
     && for key in \
@@ -73,7 +73,6 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
     && rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
     && ln -s /usr/local/bin/node /usr/local/bin/nodejs
 
-
 RUN set -ex \
     && for key in \
     6A010C5166006599AA17F08146C2130DFD2497F5 \
@@ -93,8 +92,7 @@ RUN set -ex \
     && ln -s /opt/yarn/bin/yarn /usr/local/bin/yarnpkg \
     && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz
 
-#C/C++ Developer tools
-
+# C/C++ Developer tools
 # install clangd and clang-tidy from the public LLVM PPA (nightly build / development version)
 # and also the GDB debugger, cmake from the Ubuntu repos
 RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
@@ -102,16 +100,17 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     apt-get update && \
     apt-get install -y cmake \
                        clang \
-#                       clang-tools-11 \
-#                       clangd-11 \
-#                       clang-tidy-11 \
+                       clang-tools-11 \
+                       clangd-11 \
+                       clang-tidy-11 \
                        gdb \
                        valgrind && \
-#    ln -s /usr/bin/clangd-11 /usr/bin/clangd && \
-#    ln -s /usr/bin/clang-tidy-11 /usr/bin/clang-tidy && \
+    apt-get clean && \
+    ln -s /usr/bin/clangd-11 /usr/bin/clangd && \
+    ln -s /usr/bin/clang-tidy-11 /usr/bin/clang-tidy && \
     rm -rf /var/lib/apt/lists/*
 
-# Install libinetsocket
+# Install libinetsocket and openssl
 RUN git clone https://github.com/dermesser/libsocket.git && \
     cd libsocket && \
     cmake CMakeLists.txt && \
@@ -119,10 +118,8 @@ RUN git clone https://github.com/dermesser/libsocket.git && \
     make install && \
     ldconfig && \
     cd .. && \
-    rm -rf libsocket
-
-# Install openssl
-RUN git clone https://github.com/openssl/openssl.git && \
+    rm -rf libsocket && \
+    git clone https://github.com/openssl/openssl.git && \
     cd openssl && \
     ./config && \
     make && \
@@ -134,14 +131,12 @@ RUN git clone https://github.com/openssl/openssl.git && \
 # User account
 RUN adduser --disabled-password --gecos '' theia
 ADD settings.json /home/theia/.theia/
-
 RUN chmod g+rw /home && \
     mkdir -p /home/project && \
     chown -R theia:theia /home/theia && \
     chown -R theia:theia /home/project;
 
 # Theia application
-
 USER theia
 WORKDIR /home/theia
 ADD $version.package.json ./package.json
