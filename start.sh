@@ -3,7 +3,7 @@ IMAGE=theia-sierra-glibc
 
 # Create container and get ID
 echo "Creating container from $IMAGE image"
-CONTAINER_ID="$(docker create --security-opt seccomp=unconfined --init -it -p 3000:3000 -u `id -u`:`id -g` -v ~:/home/project:cached $IMAGE)"
+CONTAINER_ID="$(docker create --security-opt seccomp=unconfined --init -it -p 3000:3000 -u `id -u`:`id -g` -v ~:/home/project:cached --name `whoami`-theia $IMAGE)"
 echo "CONTAINER_ID: $CONTAINER_ID"
 
 # Copy files from container
