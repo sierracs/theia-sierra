@@ -1,7 +1,7 @@
 # theia-sierra-glibc Dockerfile (adapted from theia-cpp-docker Dockerfile)
 
 FROM ubuntu:18.04
-
+WORKDIR /
 ENV DEBIAN_FRONTEND noninteractive
 
 ARG GITHUB_TOKEN
@@ -15,11 +15,10 @@ ARG version=sierra
 
 # Optionally build a striped Theia application with no map file or .ts sources.
 # Makes image ~150MB smaller when enabled
-ARG strip=false
-# ARG strip=true
+ARG strip=true
 ENV strip=$strip
 
-#Common deps
+# Common deps
 RUN apt-get update && \
     apt-get -y install build-essential \
                        curl \
@@ -29,12 +28,10 @@ RUN apt-get update && \
                        wget \
                        xz-utils && \
     rm -rf /var/lib/apt/lists/* && \
-    apt-get clean
-
 #Install node and yarn
 #From: https://github.com/nodejs/docker-node/blob/6b8d86d6ad59e0d1e7a94cec2e909cad137a028f/8/Dockerfile
 # gpg keys listed at https://github.com/nodejs/node#release-keys
-RUN set -ex \
+    set -ex \
     && for key in \
     4ED778F539E3634C779C87C6D7062848A1AB005C \
     B9E2F5981AA6E0CD28160D9FF13993A75599653C \
@@ -53,9 +50,8 @@ RUN set -ex \
     gpg --batch --keyserver pgp.mit.edu --recv-keys "$key" || \
     gpg --batch --keyserver keyserver.pgp.com --recv-keys "$key" || \
     gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys "$key" ; \
-    done
-
-RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
+    done && \
+    ARCH= && dpkgArch="$(dpkg --print-architecture)" \
     && case "${dpkgArch##*-}" in \
     amd64) ARCH='x64';; \
     ppc64el) ARCH='ppc64le';; \
@@ -71,9 +67,8 @@ RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
     && grep " node-v$NODE_VERSION-linux-$ARCH.tar.xz\$" SHASUMS256.txt | sha256sum -c - \
     && tar -xJf "node-v$NODE_VERSION-linux-$ARCH.tar.xz" -C /usr/local --strip-components=1 --no-same-owner \
     && rm "node-v$NODE_VERSION-linux-$ARCH.tar.xz" SHASUMS256.txt.asc SHASUMS256.txt \
-    && ln -s /usr/local/bin/node /usr/local/bin/nodejs
-
-RUN set -ex \
+    && ln -s /usr/local/bin/node /usr/local/bin/nodejs && \
+    set -ex \
     && for key in \
     6A010C5166006599AA17F08146C2130DFD2497F5 \
     ; do \
@@ -90,12 +85,11 @@ RUN set -ex \
     && tar -xzf yarn-v$YARN_VERSION.tar.gz -C /opt/yarn --strip-components=1 \
     && ln -s /opt/yarn/bin/yarn /usr/local/bin/yarn \
     && ln -s /opt/yarn/bin/yarn /usr/local/bin/yarnpkg \
-    && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz
-
+    && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz && \
 # C/C++ Developer tools
 # install clangd and clang-tidy from the public LLVM PPA (nightly build / development version)
 # and also the GDB debugger, cmake from the Ubuntu repos
-RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
+    wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
     echo "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic main" > /etc/apt/sources.list.d/llvm.list && \
     apt-get update && \
     apt-get install -y cmake \
@@ -105,13 +99,11 @@ RUN wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
                        clang-tidy-11 \
                        gdb \
                        valgrind && \
-    apt-get clean && \
     ln -s /usr/bin/clangd-11 /usr/bin/clangd && \
     ln -s /usr/bin/clang-tidy-11 /usr/bin/clang-tidy && \
-    rm -rf /var/lib/apt/lists/*
-
+    rm -rf /var/lib/apt/lists/* && \
 # Install libinetsocket and openssl
-RUN git clone https://github.com/dermesser/libsocket.git && \
+    git clone https://github.com/dermesser/libsocket.git && \
     cd libsocket && \
     cmake CMakeLists.txt && \
     make && \
@@ -123,10 +115,10 @@ RUN git clone https://github.com/dermesser/libsocket.git && \
     cd openssl && \
     ./config && \
     make && \
-    make test && \
     make install && \
     cd .. && \
-    rm -rf openssl
+    rm -rf openssl && \
+    apt-get clean
 
 # User account
 RUN adduser --disabled-password --gecos '' theia
@@ -144,6 +136,7 @@ ADD $version.package.json ./package.json
 RUN if [ "$strip" = "true" ]; then \
 yarn --pure-lockfile && \
     NODE_OPTIONS="--max_old_space_size=4096" yarn theia build && \
+    yarn theia download:plugins && \
     yarn --production && \
     yarn autoclean --init && \
     echo *.ts >> .yarnclean && \
@@ -155,8 +148,6 @@ yarn --pure-lockfile && \
 yarn --cache-folder ./ycache && rm -rf ./ycache && \
      NODE_OPTIONS="--max_old_space_size=4096" yarn theia build \
 ;fi
-
-RUN yarn theia download:plugins
 
 EXPOSE 3000
 ENV SHELL=/bin/bash \
