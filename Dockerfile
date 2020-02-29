@@ -98,11 +98,12 @@ RUN apt-get update && \
                        clangd-11 \
                        clang-tidy-11 \
                        gdb \
-                       valgrind && \
+                       valgrind \
+                       libssl-dev && \
     ln -s /usr/bin/clangd-11 /usr/bin/clangd && \
     ln -s /usr/bin/clang-tidy-11 /usr/bin/clang-tidy && \
     rm -rf /var/lib/apt/lists/* && \
-# Install libinetsocket and openssl
+# Install libinetsocket
     git clone https://github.com/dermesser/libsocket.git && \
     cd libsocket && \
     cmake CMakeLists.txt && \
@@ -111,13 +112,6 @@ RUN apt-get update && \
     ldconfig && \
     cd .. && \
     rm -rf libsocket && \
-    git clone https://github.com/openssl/openssl.git && \
-    cd openssl && \
-    ./config && \
-    make && \
-    make install && \
-    cd .. && \
-    rm -rf openssl && \
     apt-get clean
 
 # User account
