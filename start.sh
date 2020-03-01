@@ -1,5 +1,5 @@
 # Image
-IMAGE=theia-sierra-glibc
+IMAGE=zedchance/theia-sierra-glibc
 
 # Create container and get ID
 echo "Creating container from $IMAGE image"
