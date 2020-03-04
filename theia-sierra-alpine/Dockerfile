@@ -1,3 +1,5 @@
+# theia-sierra-alpine Dockerfile (adapted from theia-docker Dockerfile)
+
 ARG NODE_VERSION=10
 FROM node:${NODE_VERSION}-alpine
 RUN apk add --no-cache make gcc g++ python
