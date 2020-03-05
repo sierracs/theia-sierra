@@ -29,4 +29,16 @@ rm passwd group
 echo "Starting container"
 docker start $CONTAINER_ID
 
+# Settings
+if [ ! -d ~/.theia-storage ]
+then
+    echo "Making ~/.theia-storage directory with empty settings.json file"
+    mkdir ~/.theia-storage
+    echo "{}" > ~/.theia-storage/settings.json
+fi
+echo "Linking settings file"
+docker exec -u root $CONTAINER_ID mkdir /home/theia/.theia
+docker exec -u root $CONTAINER_ID chown -R `whoami`:`whoami` /home/theia/.theia
+docker exec -u root $CONTAINER_ID ln -s /home/project/.theia-storage/settings.json /home/theia/.theia/
+
 #CONTAINER_ID="$(docker ps -a --format="{{.Names}})"
