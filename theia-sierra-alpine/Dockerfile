@@ -50,6 +50,7 @@ COPY --from=0 --chown=theia:theia /home/theia /home/theia
 EXPOSE 3000
 ENV SHELL=/bin/ash \
     ENV=/etc/profile \
+    HOME=/home/project \
     THEIA_DEFAULT_PLUGINS=local-dir:/home/theia/plugins
 ENV USE_LOCAL_GIT true
 USER theia
