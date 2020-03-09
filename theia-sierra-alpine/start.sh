@@ -29,6 +29,11 @@ rm passwd group
 echo "Starting container"
 docker start $CONTAINER_ID
 
+# Set prompt
+echo "Setting prompt files"
+docker exec -u root $CONTAINER_ID mv /etc/profile.d/color_prompt /etc/profile.d/color_prompt.sh
+docker exec -u root $CONTAINER_ID sed -i -e 's/\\h/\\u/' /etc/profile.d/color_prompt.sh
+
 # Settings
 if [ ! -d ~/.theia-storage ]
 then
