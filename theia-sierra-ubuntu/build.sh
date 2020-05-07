@@ -1,2 +1,2 @@
 # Build theia-sierra-glibc image command
-docker build -t theia-sierra-glibc .
+docker build -t zedchance/theia-sierra-ubuntu .
