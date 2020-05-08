@@ -1,0 +1,55 @@
+h1
+{
+    font: bold 30px helvetica;
+    text-align: center;
+}
+
+h2
+{
+    font: bold 24px helvetica;
+    text-align: center;
+}
+
+h3
+{
+    font: bold 16px helvetica;
+    text-align: center;
+}
+
+a
+{
+    text-decoration: none;
+}
+
+.box
+{
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    width: auto;
+    border:1px solid #999999;
+    border-radius: 3px;
+    font: normal 14px helvetica;
+    color: #444444;
+}
+
+.main_content
+{
+    width: 800px;
+    margin: auto;
+}
+
+.button
+{
+    font: normal 12px helvetica;
+    text-align: center;
+    background-color: #ccc;
+    border: 1px solid #999999;
+    border-radius: 3px;
+    padding: 5px;
+}
+
+.button:hover
+{
+    background-color: #bbb;
+}

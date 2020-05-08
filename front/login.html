@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Theia Sierra IDE</title>
+        <link rel="stylesheet" type="text/css" href="style.css" media="screen" />
+        <script src="validate.js"></script>
+    </head>
+
+    <body>
+        <h1>Theia Sierra IDE</h1>
+        <table class="box" border="0" cellpadding="2" cellspacing="5" bgcolor="#eeeeee">
+            <th colspan="2" align="center">Login</th>
+            <form method="post" action="start.php" onsubmit="return validate(this)">
+                <tr>
+                    <td>Username</td>
+                    <td><input type="text" maxlength="32" name="username"></td>
+                </tr>
+                <tr>
+                    <td>Password</td>
+                    <td><input type="password" maxlength="32" name="password"></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center"><input type="submit" value="Login"></td>
+                </tr>
+            </form>
+        </table>
+    </body>
+
+</html>
