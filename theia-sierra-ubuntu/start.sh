@@ -7,14 +7,14 @@ then
 fi
 
 # Image
-IMAGE=zedchance/theia-sierra-glibc
+IMAGE=zedchance/theia-sierra-ubuntu
 
 # Port
 PORT=$1
 
 # Create container and get ID
 echo "Creating container from $IMAGE image on port $PORT"
-CONTAINER_ID="$(docker create --security-opt seccomp=unconfined --init -it -p $PORT:$PORT -u `id -u`:`id -g` -v ~:/home/project:cached --name `whoami`-theia $IMAGE)"
+CONTAINER_ID=$(docker create --security-opt seccomp=unconfined --init -it -p $PORT:3000 -u `id -u`:`id -g` -v ~:/home/project:cached --name `whoami`-theia-$PORT $IMAGE)
 SHORT_ID=$(echo $CONTAINER_ID | head -c 5)
 echo "CONTAINER_ID: $SHORT_ID"
 
