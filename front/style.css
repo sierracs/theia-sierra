@@ -35,7 +35,8 @@ a
 
 .main_content
 {
-    width: 800px;
+    width: 80%;
+    max-width: 800px;
     margin: auto;
 }
 

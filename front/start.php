@@ -1,4 +1,4 @@
-<?php // start.php fires up the theia-sierra-ubuntu container
+<?php // start.php, welcome page where you chose which workspace to start
 
 // Username and password
 $username = $password = "";
@@ -8,14 +8,15 @@ $fail = validate_username($username);
 $fail .= validate_password($password);
 
 echo "<!DOCTYPE html>\n<html><head><title>Theia Sierra IDE - $username</title>";
-echo '<link rel="stylesheet" type="text/css" href="style.css" media="screen" />';
+echo "<link rel='stylesheet' type='text/css' href='style.css' media='screen' />";
 
 if ($fail == "")
 {
+    $workspaces = ['hello-world', 'CS46'];
     echo "</head><body>";
     echo "<h1>Welcome $username</h1><br>";
     echo "<div class='main_content'>";
-    echo make_card("CS46 workspace", "");
+    echo make_card($workspaces);
     echo "</div>";
     $logout_button = "<a href='/front/login.html' class='button'>Back to login screen</a>";
     echo "<h3>" . $logout_button . "</h3><br>";
@@ -43,18 +44,26 @@ function fix_string($string)
     return htmlentities($string);
 }
 
-function make_card($title, $description)
+// Creates the box with drop down
+function make_card($workspaces)
 {
-    $launch_link = 'http://localhost:3000/#/home/project';
-    $launch_button = '<input type="submit" name="launch" value="Launch">';
     $card = <<<_END
     <table class="box" border="0" cellpadding="2" cellspacing="5" bgcolor="#eeeeee">
-        <th colspan="1" align="center">$title</th>
-            <tr><td>$description</td></tr>
+        <th colspan="1" align="center">Workspaces</th>
+            <tr><td>Please choose a workspace below:</td></tr>
             <form method="post" action="launch.php">
-            <tr><td colspan="2" align="center">$launch_button</td></tr>
+                <tr><td colspan="2" align="center">
+                    <select name="workspace-list">
+_END;
+    foreach($workspaces as $workspace) $card .= "<option value=$workspace>$workspace</option>";
+    $card .= <<<_END
+    </select>
+                </td></tr>
+                <tr><td colspan="2" align="center">
+                    <input type='submit' value='Launch'> 
+                </td></tr>
             </form>
-    </table>
+    </table><br>
 _END;
     return $card;
 }
