@@ -1,4 +1,4 @@
-# theia-sierra-glibc Dockerfile (adapted from theia-cpp-docker Dockerfile)
+# theia-sierra-ubuntu Dockerfile (adapted from theia-cpp-docker Dockerfile)
 
 FROM ubuntu:18.04
 WORKDIR /
@@ -89,24 +89,12 @@ RUN apt-get update && \
     apt-get update && \
     apt-get install -y cmake \
                        clang \
-                       clang-tools-11 \
-                       clangd-11 \
-                       clang-tidy-11 \
                        gdb \
                        valgrind \
                        libssl-dev && \
     ln -s /usr/bin/clangd-11 /usr/bin/clangd && \
     ln -s /usr/bin/clang-tidy-11 /usr/bin/clang-tidy && \
     rm -rf /var/lib/apt/lists/* && \
-# Install libinetsocket
-    git clone https://github.com/dermesser/libsocket.git && \
-    cd libsocket && \
-    cmake CMakeLists.txt && \
-    make && \
-    make install && \
-    ldconfig && \
-    cd .. && \
-    rm -rf libsocket && \
     apt-get clean
 
 # User account

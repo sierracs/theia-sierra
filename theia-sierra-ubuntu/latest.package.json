@@ -17,7 +17,6 @@
         "@theia/callhierarchy": "latest",
         "@theia/console": "latest",
         "@theia/core": "latest",
-        "@theia/cpp": "latest",
         "@theia/cpp-debug": "latest",
         "@theia/debug": "latest",
         "@theia/editor": "latest",
@@ -26,9 +25,7 @@
         "@theia/filesystem": "latest",
         "@theia/getting-started": "latest",
         "@theia/git": "latest",
-        "@theia/json": "latest",
         "@theia/keymaps": "latest",
-        "@theia/languages": "latest",
         "@theia/markers": "latest",
         "@theia/messages": "latest",
         "@theia/metrics": "latest",
@@ -37,7 +34,6 @@
         "@theia/navigator": "latest",
         "@theia/outline-view": "latest",
         "@theia/output": "latest",
-        "@theia/plantuml": "latest",
         "@theia/plugin": "latest",
         "@theia/plugin-ext": "latest",
         "@theia/plugin-ext-vscode": "latest",
@@ -51,16 +47,14 @@
         "@theia/typehierarchy": "latest",
         "@theia/userstorage": "latest",
         "@theia/variable-resolver": "latest",
-        "@theia/workspace": "latest",
-        "typescript": "latest"
-    },
-    "resolutions": {
-        "vscode-languageserver-protocol": "3.15.0-next.9",
-        "vscode-languageserver-types": "3.15.0-next.5",
-        "**/vscode-json-languageserver/**/vscode-languageserver": "6.0.0-next.1"
+        "@theia/vsx-registry": "latest",
+        "@theia/workspace": "latest"
     },
     "devDependencies": {
         "@theia/cli": "latest"
+    },
+    "scripts": {
+        "preinstall": "node-gyp install"
     },
     "theiaPluginsDir": "plugins",
     "theiaPlugins": {
@@ -82,17 +76,18 @@
         "vscode-builtin-handlebars": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/handlebars-1.39.1-prel.vsix",
         "vscode-builtin-hlsl": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/hlsl-1.39.1-prel.vsix",
         "vscode-builtin-html": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/html-1.39.1-prel.vsix",
+        "vscode-builtin-html-language-features": "https://open-vsx.org/api/vscode/html-language-features/1.49.0/file/vscode.html-language-features-1.49.0.vsix",
         "vscode-builtin-ini": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/ini-1.39.1-prel.vsix",
         "vscode-builtin-jake": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/jake-1.39.1-prel.vsix",
         "vscode-builtin-java": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/java-1.39.1-prel.vsix",
         "vscode-builtin-javascript": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/javascript-1.39.1-prel.vsix",
         "vscode-builtin-json": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/json-1.39.1-prel.vsix",
+        "vscode-builtin-json-language-features": "https://open-vsx.org/api/vscode/json-language-features/1.46.1/file/vscode.json-language-features-1.46.1.vsix",
         "vscode-builtin-less": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/less-1.39.1-prel.vsix",
         "vscode-builtin-log": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/log-1.39.1-prel.vsix",
         "vscode-builtin-lua": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/lua-1.39.1-prel.vsix",
         "vscode-builtin-make": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/make-1.39.1-prel.vsix",
         "vscode-builtin-markdown": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/markdown-1.39.1-prel.vsix",
-        "vscode-builtin-markdown-language-features": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/markdown-language-features-1.39.1-prel.vsix",
         "vscode-builtin-merge-conflicts": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/merge-conflict-1.39.1-prel.vsix",
         "vscode-builtin-npm": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/npm-1.39.1-prel.vsix",
         "vscode-builtin-node-debug": "https://github.com/theia-ide/vscode-node-debug/releases/download/v1.35.3/node-debug-1.35.3.vsix",
@@ -126,6 +121,8 @@
         "vscode-builtin-icon-theme-seti": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/vscode-theme-seti-1.39.1-prel.vsix",
         "vscode-builtin-xml": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/xml-1.39.1-prel.vsix",
         "vscode-builtin-yaml": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/yaml-1.39.1-prel.vsix",
-        "vscode-editorconfig": "https://github.com/theia-ide/editorconfig-vscode/releases/download/v0.14.4/EditorConfig-0.14.4.vsix"
+        "vscode-clangd": "https://open-vsx.org/api/llvm-vs-code-extensions/vscode-clangd/0.1.5/file/llvm-vs-code-extensions.vscode-clangd-0.1.5.vsix",
+        "vscode-editorconfig": "https://github.com/theia-ide/editorconfig-vscode/releases/download/v0.14.4/EditorConfig-0.14.4.vsix",
+        "plantuml": "https://open-vsx.org/api/jebbs/plantuml/2.13.12/file/jebbs.plantuml-2.13.12.vsix"
     }
 }
