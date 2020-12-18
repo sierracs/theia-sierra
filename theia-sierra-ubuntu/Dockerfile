@@ -5,9 +5,9 @@ WORKDIR /
 ENV DEBIAN_FRONTEND noninteractive
 
 ARG GITHUB_TOKEN
-ARG NODE_VERSION=10.15.3
+ARG NODE_VERSION=12.18.3
 ENV NODE_VERSION $NODE_VERSION
-ENV YARN_VERSION 1.13.0
+ENV YARN_VERSION 1.22.5
 
 # use "latest" or "next" version for Theia packages
 # ARG version=latest
@@ -21,7 +21,12 @@ RUN apt-get update && \
                        python \
                        gpg \
                        wget \
-                       xz-utils && \
+                       xz-utils \
+                       cmake \
+                       clang \
+                       gdb \
+                       valgrind \
+                       libssl-dev && \
     rm -rf /var/lib/apt/lists/* && \
 #Install node and yarn
 #From: https://github.com/nodejs/docker-node/blob/6b8d86d6ad59e0d1e7a94cec2e909cad137a028f/8/Dockerfile
@@ -81,20 +86,7 @@ RUN apt-get update && \
     && ln -s /opt/yarn/bin/yarn /usr/local/bin/yarn \
     && ln -s /opt/yarn/bin/yarn /usr/local/bin/yarnpkg \
     && rm yarn-v$YARN_VERSION.tar.gz.asc yarn-v$YARN_VERSION.tar.gz && \
-# C/C++ Developer tools
-# install clangd and clang-tidy from the public LLVM PPA (nightly build / development version)
-# and also the GDB debugger, cmake from the Ubuntu repos
-    wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - && \
-    echo "deb http://apt.llvm.org/bionic/ llvm-toolchain-bionic main" > /etc/apt/sources.list.d/llvm.list && \
-    apt-get update && \
-    apt-get install -y cmake \
-                       clang \
-                       gdb \
-                       valgrind \
-                       libssl-dev && \
-    ln -s /usr/bin/clangd-11 /usr/bin/clangd && \
-    ln -s /usr/bin/clang-tidy-11 /usr/bin/clang-tidy && \
-    rm -rf /var/lib/apt/lists/* && \
+# Clean up
     apt-get clean
 
 # User account
