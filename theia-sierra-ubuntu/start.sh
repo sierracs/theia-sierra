@@ -20,9 +20,7 @@ GROUP_ID=1000
 
 # Create container and get ID
 echo "Creating container from $IMAGE image on port $PORT"
-CONTAINER_ID=$(docker create --security-opt seccomp=unconfined --init -it -p $PORT:3000 -u $USER_ID:$GROUP_ID --name $WHOAMI-theia-$PORT $IMAGE)
-SHORT_ID=$(echo $CONTAINER_ID | head -c 5)
-echo "CONTAINER_ID: $SHORT_ID"
+CONTAINER_ID=$(docker create --security-opt seccomp=unconfined --init -it -p 127.0.0.1:$PORT:3000 -u $USER_ID:$GROUP_ID --name $WHOAMI-theia-$PORT $IMAGE)
 
 # Start container
 echo "Starting container"
