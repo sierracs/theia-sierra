@@ -11,11 +11,11 @@ This is a helper script that creates a new container, copies necessary ids over 
 It takes 4 command line arguments:
 
 ```
-./start port_number user_name user_id group_id
+./start port_number user_name
 ```
 
 For example:
 
 ```
-./start 3000 zed 501 20
+./start 3000 zed
 ```
