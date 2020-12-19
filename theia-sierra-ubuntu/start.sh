@@ -1,20 +1,24 @@
 # Check for command line arguments
-if test $# -eq 0
+if test $# -lt 4
 then
-    echo "Usage: ./start port_number"
-    echo "Example: ./start 3000"
+    echo "ERROR: Not enough command line arguments"
+    echo "Usage: $0 port_number user_name user_id group_id"
+    echo "Example: $0 3000 zed 500 20"
     exit 1
 fi
 
 # Image
 IMAGE=zedchance/theia-sierra-ubuntu
 
-# Port
+# Command line arguments
 PORT=$1
+WHOAMI=$2
+USER_ID=$3
+GROUP_ID=$4
 
 # Create container and get ID
 echo "Creating container from $IMAGE image on port $PORT"
-CONTAINER_ID=$(docker create --security-opt seccomp=unconfined --init -it -p $PORT:3000 -u `id -u`:`id -g` -v ~:/home/project:cached --name `whoami`-theia-$PORT $IMAGE)
+CONTAINER_ID=$(docker create --security-opt seccomp=unconfined --init -it -p $PORT:3000 -u $USER_ID:$GROUP_ID --name $WHOAMI-theia-$PORT $IMAGE)
 SHORT_ID=$(echo $CONTAINER_ID | head -c 5)
 echo "CONTAINER_ID: $SHORT_ID"
 
@@ -25,8 +29,8 @@ docker cp $CONTAINER_ID:/etc/group .
 
 # Copy ids into passwd and group
 echo "Adding ids to passwd and group files"
-echo "`whoami`:x:`id -u`:`id -g`:,,,:/home/project:/bin/bash" >> passwd
-echo "`whoami`:x:`id -g`:" >> group
+echo "$WHOAMI:x:$USER_ID:$GROUP_ID:,,,:/home/project:/bin/bash" >> passwd
+echo "$WHOAMI:x:$GROUP_ID:" >> group
 
 # Copy files into container
 echo "Copying back to container"
@@ -40,6 +44,10 @@ rm passwd group
 # Start container
 echo "Starting container"
 docker start $CONTAINER_ID
+
+# Setting permissions
+echo "Setting permissions"
+docker exec -u root $CONTAINER_ID chown -R $WHOAMI:$WHOAMI /home/project
 
 # Settings
 # if [ ! -d ~/.theia-storage ]
