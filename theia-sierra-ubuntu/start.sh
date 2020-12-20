@@ -30,3 +30,6 @@ docker start $CONTAINER_ID
 echo "Renaming user to $WHOAMI"
 docker exec -u root $CONTAINER_ID usermod -l $WHOAMI theia
 
+echo "Copying welcome message"
+docker cp WELCOME.md $CONTAINER_ID:/home/project/
+

@@ -6,9 +6,9 @@ Image contains: `clang`, `gdb`, `valgrind`, `libssl`.
 
 ### start.sh
 
-This is a helper script that creates a new container, copies necessary ids over to the container, then starts it.
+This is a helper script that creates a new container then starts it.
 
-It takes 4 command line arguments:
+It takes 2 command line arguments:
 
 ```
 ./start port_number user_name
