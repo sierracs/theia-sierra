@@ -4,6 +4,7 @@ A Docker image built off of the [theia-cpp-docker](https://github.com/theia-ide/
 
 Image contains: `clang`, `gdb`, `valgrind`, `libssl`.
 
-### start.sh
+### build.sh
 
-This is a helper script that creates a new container, copies necessary ids over to the container, then starts it.
+This is a helper script that builds the zedchance/theia-sierra-ubuntu image using the Dockerfile.
+

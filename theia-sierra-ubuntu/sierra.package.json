@@ -1,12 +1,12 @@
 {
     "private": true,
-    "name": "@theia/cpp-docker-example",
+    "name": "theia-sierra-ubuntu",
     "version": "0.0.1",
     "license": "Apache-2.0",
     "theia": {
         "frontend": {
             "config": {
-                "applicationName": "Theia C/C++ Example",
+                "applicationName": "Theia IDE",
                 "preferences": {
                     "files.enableTrash": false
                 }
