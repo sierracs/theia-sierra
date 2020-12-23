@@ -25,7 +25,10 @@ CONTAINER_ID=$(docker create --security-opt seccomp=unconfined --init -it --netw
 echo "Starting container"
 docker start $CONTAINER_ID
 
-# Rename user to specified whoami
+# Rename user to specified whoami, and setup sudoers
+echo "Setting up sudoers"
+docker exec -u root $CONTAINER_ID bash -c "echo '$WHOAMI ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers"
+
 echo "Renaming user to $WHOAMI"
 docker exec -u root $CONTAINER_ID usermod -l $WHOAMI theia
 
