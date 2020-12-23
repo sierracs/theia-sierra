@@ -16,6 +16,7 @@ ARG version=sierra
 # Common deps
 RUN apt-get update && \
     apt-get -y install build-essential \
+                       sudo \
                        curl \
                        git \
                        python \
