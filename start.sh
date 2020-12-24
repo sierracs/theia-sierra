@@ -33,10 +33,7 @@ fi
 echo "Starting container"
 docker start $CONTAINER_ID
 
-# Rename user to specified whoami, and setup sudoers
-echo "Setting up sudoers"
-docker exec -u root $CONTAINER_ID bash -c "echo '$WHOAMI ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers"
-
+# Rename user to specified whoami
 echo "Renaming user to $WHOAMI"
 docker exec -u root $CONTAINER_ID usermod -l $WHOAMI theia
 

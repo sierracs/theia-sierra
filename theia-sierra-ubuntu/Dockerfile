@@ -96,7 +96,9 @@ RUN adduser --disabled-password --gecos '' theia
 RUN chmod g+rw /home && \
     mkdir -p /home/project && \
     chown -R theia:theia /home/theia && \
-    chown -R theia:theia /home/project;
+    chown -R theia:theia /home/project && \
+# Allow sudo use without password
+    echo "%theia ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Theia application
 USER theia
