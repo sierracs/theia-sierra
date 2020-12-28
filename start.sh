@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Check for command line arguments
 if test $# -lt 1
 then
