@@ -8,19 +8,18 @@ then
     exit 1
 fi
 
-# Image
-IMAGE=zedchance/theia-sierra-ubuntu
-
 # Command line arguments
 WHOAMI=$1
 PORT=$2
 
-# Theia user and group ids
+# Config
 USER_ID=1000
 GROUP_ID=1000
-
-# URL
+IMAGE=zedchance/theia-sierra-ubuntu
 URL=cside-test.cf
+
+# Exit on command fail
+set -e
 
 # Create container and get ID
 if test $# -eq 1
