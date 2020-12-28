@@ -19,14 +19,31 @@ PORT=$2
 USER_ID=1000
 GROUP_ID=1000
 
+# URL
+URL=cside-test.cf
+
 # Create container and get ID
 if test $# -eq 1
 then
     echo "Creating container from $IMAGE, adding to theia-net"
-    CONTAINER_ID=$(docker create --security-opt seccomp=unconfined --init -it --network theia-net -u $USER_ID:$GROUP_ID --name $WHOAMI-theia $IMAGE)
+    CONTAINER_ID=$(docker create --security-opt seccomp=unconfined \
+                                 --init \
+                                 -it \
+                                 --network theia-net \
+                                 -e VIRTUAL_HOST=$WHOAMI.$URL \
+                                 -e LETSENCRYPT_HOST=$WHOAMI.$URL \
+                                 -u $USER_ID:$GROUP_ID \
+                                 --name $WHOAMI-theia \
+                                 $IMAGE)
 else
     echo "Creating container from $IMAGE on port $PORT"
-    CONTAINER_ID=$(docker create --security-opt seccomp=unconfined --init -it -p 127.0.0.1:$PORT:3000 -u $USER_ID:$GROUP_ID --name $WHOAMI-theia $IMAGE)
+    CONTAINER_ID=$(docker create --security-opt seccomp=unconfined \
+                                 --init \
+                                 -it \
+                                 -p 127.0.0.1:$PORT:3000 \
+                                 -u $USER_ID:$GROUP_ID \
+                                 --name $WHOAMI-theia \
+                                 $IMAGE)
 fi
 
 # Start container
