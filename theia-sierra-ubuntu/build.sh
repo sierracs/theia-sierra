@@ -1,13 +1,8 @@
 #!/bin/bash
 
-# Build theia-sierra-ubuntu image, defaulting to amd64 arch
-if test $# -lt 1
-then
-    ARCH=$(arch)
-else
-    ARCH=$1
-fi
+# Default to system's arch
+ARCH=${1:-$(arch)}
 
 echo "Building with $ARCH architecture"
-docker buildx build --platform linux/$ARCH -t zedchance/theia-sierra-ubuntu:$ARCH .
+docker buildx build --platform linux/"$ARCH" -t zedchance/theia-sierra-ubuntu:"$ARCH" .
 

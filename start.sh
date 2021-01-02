@@ -17,7 +17,7 @@ PORT=$2
 # Config
 USER_ID=1000
 GROUP_ID=1000
-IMAGE=zedchance/theia-sierra-ubuntu
+IMAGE=zedchance/theia-sierra-ubuntu:$(arch)
 URL=cside-test.cf
 
 # Exit on command fail
@@ -30,32 +30,37 @@ then
     CONTAINER_ID=$(docker create --security-opt seccomp=unconfined \
                                  --init \
                                  -it \
+                                 --mount source="$WHOAMI"-storage,target=/home \
                                  --network theia-net \
-                                 -e VIRTUAL_HOST=$WHOAMI.$URL \
-                                 -e LETSENCRYPT_HOST=$WHOAMI.$URL \
-                                 -u $USER_ID:$GROUP_ID \
-                                 --name $WHOAMI-theia \
+                                 -e VIRTUAL_HOST="$WHOAMI"."$URL" \
+                                 -e LETSENCRYPT_HOST="$WHOAMI"."$URL" \
+                                 -u "$USER_ID:$GROUP_ID" \
+                                 --name "$WHOAMI"-theia \
                                  $IMAGE)
 else
     echo "Creating container from $IMAGE on port $PORT"
     CONTAINER_ID=$(docker create --security-opt seccomp=unconfined \
                                  --init \
                                  -it \
-                                 -p 127.0.0.1:$PORT:3000 \
+                                 --mount source="$WHOAMI"-storage,target=/home \
+                                 -p 127.0.0.1:"$PORT":3000 \
                                  -u $USER_ID:$GROUP_ID \
-                                 --name $WHOAMI-theia \
+                                 --name "$WHOAMI"-theia \
                                  $IMAGE)
 fi
 
 # Start container
 echo "Starting container"
-docker start $CONTAINER_ID
+docker start "$CONTAINER_ID"
 
 # Rename user to specified whoami
 echo "Renaming user to $WHOAMI"
-docker exec -u root $CONTAINER_ID usermod -l $WHOAMI theia
+docker exec -u root "$CONTAINER_ID" usermod -l "$WHOAMI" theia
 
 # Add welcome message to container's project dir
 echo "Copying welcome message"
-docker cp WELCOME.md $CONTAINER_ID:/home/project/
+docker cp WELCOME.md "$CONTAINER_ID":/home/project/
+
+# All done
+echo "👍"
 
