@@ -18,7 +18,15 @@ PORT=$2
 USER_ID=1000
 GROUP_ID=1000
 IMAGE=zedchance/theia-sierra-ubuntu:$(arch)
-URL=cside-test.cf
+URL=theia.cs.sierracollege.edu
+CONTAINER_NAME="$WHOAMI"-theia
+
+# First check to see if container already exists
+if [[ $(docker ps --filter "name=$CONTAINER_NAME" --format "{{.Names}}") == $CONTAINER_NAME ]]
+then
+    docker start "$CONTAINER_NAME" > /dev/null
+    exit
+fi
 
 # Exit on command fail
 set -e
@@ -35,8 +43,8 @@ then
                                  -e VIRTUAL_HOST="$WHOAMI"."$URL" \
                                  -e LETSENCRYPT_HOST="$WHOAMI"."$URL" \
                                  -u "$USER_ID:$GROUP_ID" \
-                                 --name "$WHOAMI"-theia \
-                                 $IMAGE)
+                                 --name "$CONTAINER_NAME" \
+                                 "$IMAGE")
 else
     echo "Creating container from $IMAGE on port $PORT"
     CONTAINER_ID=$(docker create --security-opt seccomp=unconfined \
@@ -45,8 +53,8 @@ else
                                  --mount source="$WHOAMI"-storage,target=/home \
                                  -p 127.0.0.1:"$PORT":3000 \
                                  -u $USER_ID:$GROUP_ID \
-                                 --name "$WHOAMI"-theia \
-                                 $IMAGE)
+                                 --name "$CONTAINER_NAME" \
+                                 "$IMAGE")
 fi
 
 # Start container
