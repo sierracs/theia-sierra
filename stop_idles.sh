@@ -23,7 +23,12 @@ do
     then
         echo "Closed container found: $CONTAINER_ID"
         NOW=$(date +%s)
+
+        # Date command on macOS
         THEN=$(date -jf "%Y-%m-%dT%H:%M:%S" "$TIMESTAMP" "+%s")
+        # Date command on linux
+        # THEN=$(date -d "$TIMESTAMP" +%s)
+
         # +28800 to compensate for PST to UTC, fix this
         DIFF=$(expr "$NOW" - "$THEN" + 28800)
 
