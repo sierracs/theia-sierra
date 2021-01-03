@@ -41,8 +41,6 @@ then
                                  -it \
                                  --mount source="$WHOAMI"-storage,target=/home \
                                  --network theia-net \
-                                 -e VIRTUAL_HOST="$WHOAMI"."$URL" \
-                                 -e LETSENCRYPT_HOST="$WHOAMI"."$URL" \
                                  -u "$USER_ID:$GROUP_ID" \
                                  --name "$CONTAINER_NAME" \
                                  "$IMAGE")
