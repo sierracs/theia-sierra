@@ -5,23 +5,23 @@ INACTIVE="All frontend contributions have been stopped"
 TIMEOUT=1800
 
 # Loop thru running containers
-for CONTAINER_ID in $(docker ps -q)
+for CONTAINER in $(docker ps --format {{.Names}})
 do
     # Get latest log entry
-    LOG=$(docker container logs -t -n 1 "$CONTAINER_ID")
+    LOG=$(docker container logs -t -n 1 "$CONTAINER")
 
     # Timestamp is the first 30 chars of the log
     TIMESTAMP=${LOG:0:19}
 
     # Debug
-    # echo "Container ID: $CONTAINER_ID"
+    # echo "Container ID: $CONTAINER"
     # echo "Log: $LOG"
     # echo "Timestamp: $TIMESTAMP"
 
     # Check to see if the log entry is the inactive message
     if [[ $LOG == *"$INACTIVE"* ]]
     then
-        echo "Closed container found: $CONTAINER_ID"
+        echo "Closed container found: $CONTAINER"
         NOW=$(date +%s)
 
         # Date command on macOS
@@ -39,13 +39,13 @@ do
 
         if [[ $DIFF -gt $TIMEOUT ]]
         then
-            echo "$CONTAINER_ID has exceeded time out, stopping..."
-            docker stop $CONTAINER_ID
+            echo "    $CONTAINER has exceeded time out, stopping..."
+            docker stop $CONTAINER
+            echo ""
         else
             IDLE_MIN=$(expr $DIFF / 60)
-            echo "$CONTAINER_ID has been idle for $IDLE_MIN minutes"
+            echo "    $CONTAINER has been idle for $IDLE_MIN minutes"
         fi
     fi
-    echo "---"
 done
 
