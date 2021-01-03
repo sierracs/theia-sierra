@@ -29,8 +29,11 @@ do
         # Date command on linux
         # THEN=$(date -d "$TIMESTAMP" +%s)
 
+        # Calculate idle time
         # +28800 to compensate for PST to UTC, fix this
         DIFF=$(expr "$NOW" - "$THEN" + 28800)
+        IDLE_MIN=$(expr $DIFF / 60)
+        echo "    $CONTAINER has been idle for $IDLE_MIN minutes"
 
         # Debug
         # echo "Now : $NOW"
@@ -41,10 +44,6 @@ do
         then
             echo "    $CONTAINER has exceeded time out, stopping..."
             docker stop $CONTAINER
-            echo ""
-        else
-            IDLE_MIN=$(expr $DIFF / 60)
-            echo "    $CONTAINER has been idle for $IDLE_MIN minutes"
         fi
     fi
 done
