@@ -43,7 +43,7 @@ do
         if [[ $DIFF -gt $TIMEOUT ]]
         then
             echo "    $CONTAINER has exceeded time out, stopping..."
-            docker stop $CONTAINER
+            docker stop $CONTAINER > /dev/null
         fi
     fi
 done
