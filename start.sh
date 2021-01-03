@@ -22,8 +22,9 @@ URL=theia.cs.sierracollege.edu
 CONTAINER_NAME="$WHOAMI"-theia
 
 # First check to see if container already exists
-if [[ $(docker ps --filter "name=$CONTAINER_NAME" --format "{{.Names}}") == $CONTAINER_NAME ]]
+if [[ $(docker ps -a --filter "name=$CONTAINER_NAME" --format "{{.Names}}") == $CONTAINER_NAME ]]
 then
+    echo "Starting $CONTAINER_NAME"
     docker start "$CONTAINER_NAME" > /dev/null
     exit
 fi
