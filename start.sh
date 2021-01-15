@@ -4,22 +4,24 @@
 if test $# -lt 1
 then
     echo "ERROR: Incorrect command line arguments"
-    echo "Usage: $0 user_name [port_number]"
+    echo "Usage: $0 username [port_number]"
     echo "Example: $0 zed"
     echo "Example: $0 zed 3000"
     exit 1
 fi
 
 # Command line arguments
-WHOAMI=$1
+USERNAME=$1
 PORT=$2
 
 # Config
 USER_ID=1000
 GROUP_ID=1000
 IMAGE=zedchance/theia-sierra-ubuntu:$(arch)
-URL=theia.cs.sierracollege.edu
-CONTAINER_NAME="$WHOAMI"-theia
+WKSP=cs46
+N=1  # for multiple containers in the future
+CONTAINER_NAME=theia-"$USERNAME"-"$WKSP"-"$N"
+VOLUME_NAME=vol-"$USERNAME"-"$WKSP"-"$N"
 
 # First check to see if container already exists
 if [[ $(docker ps -a --filter "name=$CONTAINER_NAME" --format "{{.Names}}") == $CONTAINER_NAME ]]
@@ -39,7 +41,7 @@ then
     CONTAINER_ID=$(docker create --security-opt seccomp=unconfined \
                                  --init \
                                  -it \
-                                 --mount source="$WHOAMI"-storage,target=/home \
+                                 --mount source="$VOLUME_NAME",target=/project \
                                  --network theia-net \
                                  -u "$USER_ID:$GROUP_ID" \
                                  --name "$CONTAINER_NAME" \
@@ -49,7 +51,7 @@ else
     CONTAINER_ID=$(docker create --security-opt seccomp=unconfined \
                                  --init \
                                  -it \
-                                 --mount source="$WHOAMI"-storage,target=/home \
+                                 --mount source="$VOLUME_NAME",target=/project \
                                  -p 127.0.0.1:"$PORT":3000 \
                                  -u $USER_ID:$GROUP_ID \
                                  --name "$CONTAINER_NAME" \
@@ -61,12 +63,12 @@ echo "Starting container"
 docker start "$CONTAINER_ID"
 
 # Rename user to specified whoami
-echo "Renaming user to $WHOAMI"
-docker exec -u root "$CONTAINER_ID" usermod -l "$WHOAMI" theia
+echo "Renaming user to $USERNAME"
+docker exec -u root "$CONTAINER_ID" usermod -l "$USERNAME" theia
 
 # Add welcome message to container's project dir
 echo "Copying welcome message"
-docker cp WELCOME.md "$CONTAINER_ID":/home/project/
+docker cp WELCOME.md "$CONTAINER_ID":/project
 
 # All done
 echo "👍"
