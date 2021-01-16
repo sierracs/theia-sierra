@@ -10,13 +10,7 @@
                 "preferences": {
                     "files.enableTrash": false,
                     "files.exclude": {
-                        ".cache": true,
-                        ".npm": true,
-                        ".yarn": true,
-                        ".theia": true,
-                        ".bashrc": true,
-                        ".bash_logout": true,
-                        ".profile": true
+                        ".*": true
                     }
                 }
             }
