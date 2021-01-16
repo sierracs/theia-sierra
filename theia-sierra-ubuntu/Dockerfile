@@ -91,9 +91,8 @@ RUN apt-get update && \
     apt-get clean
 
 # User account
-RUN adduser --disabled-password --gecos '' --home /home theia && \
-    cp -a /etc/skel/. /home && \
-    chown -R theia:theia /home && \
+RUN rm -rf /home && \
+    adduser --disabled-password --gecos '' --home /home theia && \
     chmod g+rw /home && \
 # Theia install location
     mkdir -p /theia && \
