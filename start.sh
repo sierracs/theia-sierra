@@ -17,7 +17,7 @@ PORT=$2
 # Config
 USER_ID=1000
 GROUP_ID=1000
-IMAGE=zedchance/theia-sierra-ubuntu:$(arch)
+IMAGE=zedchance/theia-sierra-ubuntu:latest
 WKSP=cs46
 N=1  # for multiple containers in the future
 CONTAINER_NAME=theia-"$USERNAME"-"$WKSP"-"$N"
