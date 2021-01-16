@@ -8,7 +8,10 @@
             "config": {
                 "applicationName": "Theia IDE",
                 "preferences": {
-                    "files.enableTrash": false
+                    "files.enableTrash": false,
+                    "files.exclude": {
+                        ".*": true
+                    }
                 }
             }
         }
