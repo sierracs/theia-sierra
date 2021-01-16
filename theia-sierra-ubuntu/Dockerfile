@@ -1,6 +1,6 @@
 # theia-sierra-ubuntu Dockerfile (adapted from theia-cpp-docker Dockerfile)
 
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 WORKDIR /
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -99,6 +99,9 @@ RUN rm -rf /home && \
     chown -R theia:theia /theia && \
 # Allow sudo use without password
     echo "%theia ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+
+# Add welcome message
+COPY WELCOME.md /home/
 
 # Theia application
 USER theia

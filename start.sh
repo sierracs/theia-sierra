@@ -66,10 +66,6 @@ docker start "$CONTAINER_ID"
 echo "Renaming user to $USERNAME"
 docker exec -u root "$CONTAINER_ID" usermod -l "$USERNAME" theia
 
-# Add welcome message to container's home dir
-echo "Copying welcome message"
-docker cp WELCOME.md "$CONTAINER_ID":/home
-
 # All done
 echo "👍"
 
