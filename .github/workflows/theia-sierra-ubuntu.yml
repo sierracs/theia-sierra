@@ -1,10 +1,10 @@
-name: CI to Docker Hub
+name: theia-sierra-ubuntu CI to Docker hub
 
 on:
   push:
     branches: [ master ]
     paths: 
-      - 'theia-sierra-ubuntu/Dockerfile'
+      - 'theia-sierra-ubuntu/**'
 
 jobs:
 
