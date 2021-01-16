@@ -91,18 +91,19 @@ RUN apt-get update && \
     apt-get clean
 
 # User account
-RUN adduser --disabled-password --gecos '' theia
-# ADD settings.json /home/theia/.theia/
-RUN chmod g+rw /home && \
-    mkdir -p /home/project && \
-    chown -R theia:theia /home/theia && \
-    chown -R theia:theia /home/project && \
+RUN adduser --disabled-password --gecos '' --home /home theia && \
+    cp -a /etc/skel/. /home && \
+    chown -R theia:theia /home && \
+    chmod g+rw /home && \
+# Theia install location
+    mkdir -p /theia && \
+    chown -R theia:theia /theia && \
 # Allow sudo use without password
     echo "%theia ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Theia application
 USER theia
-WORKDIR /home/theia
+WORKDIR /theia
 ADD $version.package.json ./package.json
 
 RUN yarn --pure-lockfile && \
@@ -118,7 +119,7 @@ RUN yarn --pure-lockfile && \
 
 EXPOSE 3000
 ENV SHELL=/bin/bash \
-    THEIA_DEFAULT_PLUGINS=local-dir:/home/theia/plugins
+    THEIA_DEFAULT_PLUGINS=local-dir:/theia/plugins
 
-ENTRYPOINT [ "node", "/home/theia/src-gen/backend/main.js", "/home/project", "--hostname=0.0.0.0" ]
-# ENTRYPOINT [ "yarn", "theia", "start", "/home/project", "--hostname=0.0.0.0" ]
+ENTRYPOINT [ "node", "/theia/src-gen/backend/main.js", "/home", "--hostname=0.0.0.0" ]
+

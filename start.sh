@@ -41,7 +41,7 @@ then
     CONTAINER_ID=$(docker create --security-opt seccomp=unconfined \
                                  --init \
                                  -it \
-                                 --mount source="$VOLUME_NAME",target=/project \
+                                 --mount source="$VOLUME_NAME",target=/home \
                                  --network theia-net \
                                  -u "$USER_ID:$GROUP_ID" \
                                  --name "$CONTAINER_NAME" \
@@ -51,7 +51,7 @@ else
     CONTAINER_ID=$(docker create --security-opt seccomp=unconfined \
                                  --init \
                                  -it \
-                                 --mount source="$VOLUME_NAME",target=/project \
+                                 --mount source="$VOLUME_NAME",target=/home \
                                  -p 127.0.0.1:"$PORT":3000 \
                                  -u $USER_ID:$GROUP_ID \
                                  --name "$CONTAINER_NAME" \
@@ -66,9 +66,9 @@ docker start "$CONTAINER_ID"
 echo "Renaming user to $USERNAME"
 docker exec -u root "$CONTAINER_ID" usermod -l "$USERNAME" theia
 
-# Add welcome message to container's project dir
+# Add welcome message to container's home dir
 echo "Copying welcome message"
-docker cp WELCOME.md "$CONTAINER_ID":/project
+docker cp WELCOME.md "$CONTAINER_ID":/home
 
 # All done
 echo "👍"
