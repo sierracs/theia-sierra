@@ -8,7 +8,7 @@ ERROR="Connection got disposed"
 TIMEOUT=1800
 
 # Loop thru running containers
-for CONTAINER in $(docker ps --format "{{.Names}}")
+for CONTAINER in $(docker ps --filter ancestor=zedchance/theia-sierra-ubuntu:latest --format "{{.Names}}")
 do
     # We don't need to check the logs of the nginx and php containers
     if [[ $CONTAINER == *"nginx"* || $CONTAINER == *"php"* ]]
