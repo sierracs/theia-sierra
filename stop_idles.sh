@@ -10,6 +10,12 @@ TIMEOUT=1800
 # Loop thru running containers
 for CONTAINER in $(docker ps --format "{{.Names}}")
 do
+    # We don't need to check the logs of the nginx and php containers
+    if [[ $CONTAINER == *"nginx"* || $CONTAINER == *"php"* ]]
+    then
+        break
+    fi
+
     # For each of the last 11 log entries
     docker container logs -t -n 11 "$CONTAINER" | while read -r entry
     do
