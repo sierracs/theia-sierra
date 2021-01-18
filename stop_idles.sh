@@ -32,21 +32,21 @@ do
             DIFF=$((NOW - THEN + 28800))
             IDLE_MIN=$((DIFF / 60))
 
-            # Debug
-            # echo "Closed container found: $CONTAINER"
-            # echo "    Now : $NOW"
-            # echo "    Then: $THEN"
-            # echo "    Diff: $DIFF"
-            # echo "    Log: ${entry:31:100}"
-            # echo "    Timestamp: $TIMESTAMP"
+            # Verbose dry run
+            if [[ $1 == "-v" ]]
+            then
+                echo "Closed container found: $CONTAINER"
+                echo "    Log: ${entry:31:100}"
+                echo "    Timestamp: $TIMESTAMP"
+                echo "    $CONTAINER has been idle for $IDLE_MIN minutes"
+                break
+            fi
 
             # Check to see if container has timed out
             if [[ $DIFF -gt $TIMEOUT ]]
             then
-                echo "$0: $CONTAINER has exceeded time out, stopping..."
+                echo "$CONTAINER has exceeded time out, stopping..."
                 docker stop "$CONTAINER" > /dev/null
-            else
-                echo "$0: $CONTAINER has been idle for $IDLE_MIN minutes"
             fi
 
             # Break because we found the inactive/error message
