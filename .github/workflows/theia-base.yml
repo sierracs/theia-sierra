@@ -1,10 +1,10 @@
-name: theia-sierra-ubuntu CI to Docker hub
+name: theia-base CI to Docker hub
 
 on:
   push:
     branches: [ master ]
     paths: 
-      - 'theia-sierra-ubuntu/**'
+      - 'theia-base/**'
 
 jobs:
 
@@ -31,10 +31,10 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v2
         with:
-          context: ./theia-sierra-ubuntu/
-          file: ./theia-sierra-ubuntu/Dockerfile
+          context: ./theia-base/
+          file: ./theia-base/Dockerfile
           push: true
-          tags: zedchance/theia-sierra-ubuntu:latest
+          tags: zedchance/theia-base:latest
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
