@@ -88,13 +88,13 @@ function stop
 }
 
 # Stop and remove a container
-function reset
+function remove
 {
     # Usage
     USERNAME=$1
     if [[ "$USERNAME" == "" ]]
     then
-        usage "reset name"
+        usage "rm name"
     fi
 
     WKSP=cs46
@@ -135,7 +135,7 @@ function new_vol
     fi
 
     # Reset the container
-    reset "$USERNAME"
+    remove "$USERNAME"
 
     # Backup volume and remove it
     echo "Backing up $VOL to $BACKUP_VOL"
@@ -212,8 +212,8 @@ case $1 in
     "stop")
         stop $2
         ;;
-    "reset")
-        reset $2
+    "rm")
+        remove $2
         ;;
     "ps")
         docker ps -a --filter ancestor=zedchance/theia-sierra-ubuntu --format "table {{.Names}}\t{{.State}}\t{{.Status}}\t{{.Mounts}}\t{{.Size}}"
@@ -228,7 +228,7 @@ case $1 in
         stop_idles $2
         ;;
     *)
-        usage "[start|stop|reset|ps|pull|new-vol|stop-idles]"
+        usage "[start|stop|rm|ps|pull|new-vol|stop-idles]"
         ;;
 esac
 
