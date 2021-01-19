@@ -171,9 +171,9 @@ function stop_idles
                 NOW=$(date +%s)
 
                 # Date command on macOS
-                THEN=$(date -jf "%Y-%m-%dT%H:%M:%S" "$TIMESTAMP" "+%s")
+                # THEN=$(date -jf "%Y-%m-%dT%H:%M:%S" "$TIMESTAMP" "+%s")
                 # Date command on linux
-                # THEN=$(date -d "$TIMESTAMP" +%s)
+                THEN=$(date -d "$TIMESTAMP" +%s)
 
                 # Calculate idle time
                 # +28800 to compensate for PST to UTC, fix this
