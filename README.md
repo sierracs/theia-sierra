@@ -15,19 +15,19 @@ theiactl [start|stop|reset|ps|pull|new-vol|stop-idles]
 To start a container:
 
 ```
-theiactl start zed
+theiactl start username
 ```
 
 To stop a container:
 
 ```
-theiactl stop zed
+theiactl stop username
 ```
 
-To reset a container (stop and remove):
+To remove a container (stop and remove):
 
 ```
-theiactl reset zed
+theiactl rm username
 ```
 
 To view all theia containers:
@@ -45,7 +45,7 @@ theiactl pull
 To backup a container's current volume, then remove it:
 
 ```
-theiactl new-vol zed
+theiactl new-vol username
 ```
 
 To stop idle containers:
