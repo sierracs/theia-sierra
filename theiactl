@@ -161,8 +161,8 @@ function stop_idles
         # For each of the last 11 log entries
         docker container logs -t -n 11 "$CONTAINER" | while read -r entry
         do
-            # Timestamp is the first 19 chars of the log
-            TIMESTAMP=${entry:0:19}
+            # Timestamp is the first 30 chars of the log
+            TIMESTAMP=${entry:0:30}
 
             # Check to see if the log entry is the inactive message
             if [[ $entry == *"$INACTIVE"* || $entry == *"$ERROR"* ]]
@@ -176,8 +176,7 @@ function stop_idles
                 THEN=$(date -d "$TIMESTAMP" +%s)
 
                 # Calculate idle time
-                # +28800 to compensate for PST to UTC, fix this
-                DIFF=$((NOW - THEN + 28800))
+                DIFF=$((NOW - THEN))
                 IDLE_MIN=$((DIFF / 60))
 
                 # Verbose dry run
@@ -193,7 +192,7 @@ function stop_idles
                 # Check to see if container has timed out
                 if [[ $DIFF -gt $TIMEOUT ]]
                 then
-                    echo "$CONTAINER has exceeded time out, stopping..."
+                    echo "$(date): $CONTAINER has exceeded time out, stopping..."
                     docker stop "$CONTAINER" > /dev/null
                 fi
 
