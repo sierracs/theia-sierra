@@ -1,12 +1,10 @@
 {
     "private": true,
-    "name": "theia-sierra-ubuntu",
-    "version": "0.0.1",
-    "license": "Apache-2.0",
+    "name": "theia-cs46",
     "theia": {
         "frontend": {
             "config": {
-                "applicationName": "Theia IDE",
+                "applicationName": "Theia IDE - CS46",
                 "preferences": {
                     "files.enableTrash": false,
                     "files.exclude": {
