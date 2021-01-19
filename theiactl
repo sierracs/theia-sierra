@@ -218,7 +218,9 @@ case $1 in
         remove $2 $3
         ;;
     "ps")
-        docker ps -a --filter ancestor=zedchance/theia-base --format "table {{.Names}}\t{{.State}}\t{{.Status}}\t{{.Image}}\t{{.Mounts}}\t{{.Size}}"
+        docker ps -a --filter ancestor=zedchance/theia-base \
+                     --filter ancestor=zedchance/theia-cs46 \
+                     --format "table {{.Names}}\t{{.State}}\t{{.Status}}\t{{.Image}}\t{{.Mounts}}\t{{.Size}}"
         ;;
     "pull")
         pull
