@@ -10,7 +10,7 @@ ENV NODE_VERSION $NODE_VERSION
 ENV YARN_VERSION 1.22.5
 
 # Base package file
-ARG version=base
+ARG version=latest
 
 # Common deps
 RUN apt-get update && \
@@ -97,7 +97,7 @@ RUN rm -rf /home && \
 # Theia application
 USER theia
 WORKDIR /theia
-ADD $version.package.json ./package.json
+COPY $version.package.json ./package.json
 
 RUN yarn --pure-lockfile && \
     NODE_OPTIONS="--max_old_space_size=4096" yarn theia build && \

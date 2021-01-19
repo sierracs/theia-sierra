@@ -1,7 +1,6 @@
 {
     "private": true,
     "name": "theia-base",
-    "version": "0.0.1",
     "theia": {
         "frontend": {
             "config": {
