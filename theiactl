@@ -226,7 +226,7 @@ case $1 in
         pull
         ;;
     "new-vol")
-        new_vol $2
+        new_vol $2 $3
         ;;
     "stop-idles")
         stop_idles $2
