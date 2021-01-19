@@ -128,14 +128,14 @@ function new_vol
     VOL=vol-"$USERNAME"-cs46-1
     BACKUP_VOL="$VOL"-prev
 
-    # Reset the container
-    reset "$USERNAME"
-
     # Make sure the old volume exists
     if ! docker volume inspect "$VOL" > /dev/null
     then
         exit
     fi
+
+    # Reset the container
+    reset "$USERNAME"
 
     # Backup volume and remove it
     echo "Backing up $VOL to $BACKUP_VOL"
