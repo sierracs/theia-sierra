@@ -109,10 +109,11 @@ function remove
     docker rm -f "$CONTAINER_NAME" > /dev/null
 }
 
-# Pull latest theia-sierra-ubuntu
+# Pull latest theia images
 function pull
 {
-    docker pull zedchance/theia-sierra-ubuntu:latest
+    docker pull zedchance/theia-base:latest
+    docker pull zedchance/theia-cs46:latest
 }
 
 # Backup a container's volume, and create a new one
