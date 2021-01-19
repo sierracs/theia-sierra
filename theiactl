@@ -14,16 +14,16 @@ function start
 {
     # Command line arguments
     USERNAME=$1
-    PORT=$2
+    WKSP=$2
+    PORT=$3
 
-    if [[ "$USERNAME" == "" ]]
+    if [[ "$USERNAME" == "" || "$WKSP" == "" ]]
     then
-        usage "start name [port]"
+        usage "start name wksp [port]"
     fi
 
     # Config
-    IMAGE=zedchance/theia-sierra-ubuntu:latest
-    WKSP=cs46
+    IMAGE=zedchance/theia-"$WKSP"
     N=1  # for multiple containers in the future
     CONTAINER_NAME=theia-"$USERNAME"-"$WKSP"-"$N"
     VOLUME_NAME=vol-"$USERNAME"-"$WKSP"-"$N"
@@ -74,12 +74,12 @@ function stop
 {
     # Usage
     USERNAME=$1
-    if [[ "$USERNAME" == "" ]]
+    WKSP=$2
+    if [[ "$USERNAME" == "" || "$WKSP" == "" ]]
     then
-        usage "stop name"
+        usage "stop name wksp"
     fi
 
-    WKSP=cs46
     N=1  # for multiple containers in the future
     CONTAINER_NAME=theia-"$USERNAME"-"$WKSP"-"$N"
 
@@ -92,17 +92,17 @@ function remove
 {
     # Usage
     USERNAME=$1
-    if [[ "$USERNAME" == "" ]]
+    WKSP=$2
+    if [[ "$USERNAME" == "" || "$WKSP" == "" ]]
     then
-        usage "rm name"
+        usage "rm name wksp"
     fi
 
-    WKSP=cs46
     N=1  # for multiple containers in the future
     CONTAINER_NAME=theia-"$USERNAME"-"$WKSP"-"$N"
 
     # Stop container
-    stop "$USERNAME"
+    stop "$USERNAME" "$WKSP"
 
     # Remove container
     echo "Removing $CONTAINER_NAME"
@@ -120,12 +120,14 @@ function new_vol
 {
     # Usage
     USERNAME=$1
-    if [[ "$USERNAME" == "" ]]
+    WKSP=$2
+    if [[ "$USERNAME" == "" || "$WKSP" == "" ]]
     then
-        usage "new-vol name"
+        usage "new-vol name wksp"
     fi
 
-    VOL=vol-"$USERNAME"-cs46-1
+    N=1
+    VOL=vol-"$USERNAME"-"$WKSP"-"$N"
     BACKUP_VOL="$VOL"-prev
 
     # Make sure the old volume exists
@@ -135,7 +137,7 @@ function new_vol
     fi
 
     # Reset the container
-    remove "$USERNAME"
+    remove "$USERNAME" "$WKSP"
 
     # Backup volume and remove it
     echo "Backing up $VOL to $BACKUP_VOL"
@@ -156,7 +158,7 @@ function stop_idles
     TIMEOUT=1800
 
     # Loop thru running containers
-    for CONTAINER in $(docker ps --filter ancestor=zedchance/theia-sierra-ubuntu:latest --format "{{.Names}}")
+    for CONTAINER in $(docker ps --filter ancestor=zedchance/theia-base --format "{{.Names}}")
     do
         # For each of the last 11 log entries
         docker container logs -t -n 11 "$CONTAINER" | while read -r entry
@@ -206,16 +208,16 @@ function stop_idles
 # Main
 case $1 in
     "start")
-        start $2 $3
+        start $2 $3 $4
         ;;
     "stop")
-        stop $2
+        stop $2 $3
         ;;
     "rm")
-        remove $2
+        remove $2 $3
         ;;
     "ps")
-        docker ps -a --filter ancestor=zedchance/theia-sierra-ubuntu --format "table {{.Names}}\t{{.State}}\t{{.Status}}\t{{.Mounts}}\t{{.Size}}"
+        docker ps -a --filter ancestor=zedchance/theia-base --format "table {{.Names}}\t{{.State}}\t{{.Status}}\t{{.Image}}\t{{.Mounts}}\t{{.Size}}"
         ;;
     "pull")
         pull
