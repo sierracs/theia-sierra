@@ -2,36 +2,61 @@
 
 Theia IDE Docker images for the CS46 class
 
-### start.sh
+## `theiactl`
 
-This is a helper script that starts up a container. If the container doesn't exist it creates it.
+`theiactl` is a helper script that allows you to start/stop containers, reset containers, stop idle containers, and more.
 
-It takes 1 command line argument to start the container and add it to `theia-net`:
-
-```
-./start name
-```
-
-For example:
+Usage:
 
 ```
-./start zed
+theiactl [start|stop|reset|ps|pull|new-vol|stop-idles]
 ```
 
-To test the container locally it takes 2 arguments, the name and port number to publish:
+To start a container:
 
 ```
-./start name port
+theiactl start zed
 ```
 
-For example:
+To stop a container:
 
 ```
-./start zed 3000
+theiactl stop zed
 ```
 
-### stop_idles.sh
+To reset a container (stop and remove):
 
-This is a script that loops over all running containers and checks their log file.
-If the log file indicates that the theia window has been closed, and the timestamp of the log is older than 30 minutes, the container is stopped.
+```
+theiactl reset zed
+```
+
+To view all theia containers:
+
+```
+theiactl ps
+```
+
+To pull the latest theia image:
+
+```
+theiactl pull
+```
+
+To backup a container's current volume, then remove it:
+
+```
+theiactl new-vol zed
+```
+
+To stop idle containers:
+
+```
+theiactl stop-idles
+```
+
+or if you want to be verbose without stopping them:
+
+```
+theiactl stop-idles -v
+```
 

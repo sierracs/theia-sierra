@@ -1,0 +1,234 @@
+#!/bin/bash
+
+# theia controller
+
+# General usage
+function usage
+{
+    echo "USAGE: theiactl $1"
+    exit
+}
+
+# Start a container, create it if it doesn't exist
+function start
+{
+    # Command line arguments
+    USERNAME=$1
+    PORT=$2
+
+    if [[ "$USERNAME" == "" ]]
+    then
+        usage "start name [port]"
+    fi
+
+    # Config
+    IMAGE=zedchance/theia-sierra-ubuntu:latest
+    WKSP=cs46
+    N=1  # for multiple containers in the future
+    CONTAINER_NAME=theia-"$USERNAME"-"$WKSP"-"$N"
+    VOLUME_NAME=vol-"$USERNAME"-"$WKSP"-"$N"
+
+    # First check to see if container already exists
+    if [[ $(docker ps -a --filter "name=$CONTAINER_NAME" --format "{{.Names}}") == $CONTAINER_NAME ]]
+    then
+        echo "Starting $CONTAINER_NAME"
+        docker start "$CONTAINER_NAME" > /dev/null
+        exit
+    fi
+
+    # Create container and get ID
+    if [[ "$PORT" == "" ]]
+    then
+        echo "Creating container from $IMAGE, adding to theia-net"
+        CONTAINER_ID=$(docker create --security-opt seccomp=unconfined \
+                                     --init \
+                                     -it \
+                                     --mount source="$VOLUME_NAME",target=/home \
+                                     --network theia-net \
+                                     -u 1000:1000 \
+                                     --name "$CONTAINER_NAME" \
+                                     "$IMAGE")
+    else
+        echo "Creating container from $IMAGE on port $PORT"
+        CONTAINER_ID=$(docker create --security-opt seccomp=unconfined \
+                                     --init \
+                                     -it \
+                                     --mount source="$VOLUME_NAME",target=/home \
+                                     -p 127.0.0.1:"$PORT":3000 \
+                                     -u 1000:1000 \
+                                     --name "$CONTAINER_NAME" \
+                                     "$IMAGE")
+    fi
+
+    # Start container
+    echo "Starting container"
+    docker start "$CONTAINER_ID"
+
+    # Rename user to specified whoami
+    echo "Renaming user to $USERNAME"
+    docker exec -u root "$CONTAINER_ID" usermod -l "$USERNAME" theia
+}
+
+# Stop a running container
+function stop
+{
+    # Usage
+    USERNAME=$1
+    if [[ "$USERNAME" == "" ]]
+    then
+        usage "stop name"
+    fi
+
+    WKSP=cs46
+    N=1  # for multiple containers in the future
+    CONTAINER_NAME=theia-"$USERNAME"-"$WKSP"-"$N"
+
+    echo "Stopping $CONTAINER_NAME"
+    docker stop "$CONTAINER_NAME" > /dev/null
+}
+
+# Stop and remove a container
+function reset
+{
+    # Usage
+    USERNAME=$1
+    if [[ "$USERNAME" == "" ]]
+    then
+        usage "reset name"
+    fi
+
+    WKSP=cs46
+    N=1  # for multiple containers in the future
+    CONTAINER_NAME=theia-"$USERNAME"-"$WKSP"-"$N"
+
+    # Stop container
+    stop "$USERNAME"
+
+    # Remove container
+    echo "Removing $CONTAINER_NAME"
+    docker rm -f "$CONTAINER_NAME" > /dev/null
+}
+
+# Pull latest theia-sierra-ubuntu
+function pull
+{
+    docker pull zedchance/theia-sierra-ubuntu:latest
+}
+
+# Backup a container's volume, and create a new one
+function new_vol
+{
+    # Usage
+    USERNAME=$1
+    if [[ "$USERNAME" == "" ]]
+    then
+        usage "new-vol name"
+    fi
+
+    VOL=vol-"$USERNAME"-cs46-1
+    BACKUP_VOL="$VOL"-prev
+
+    # Reset the container
+    reset "$USERNAME"
+
+    # Make sure the old volume exists
+    if ! docker volume inspect "$VOL" > /dev/null
+    then
+        exit
+    fi
+
+    # Backup volume and remove it
+    echo "Backing up $VOL to $BACKUP_VOL"
+    docker volume create --name "$BACKUP_VOL" > /dev/null
+    docker run --rm -it -v "$VOL":/from -v "$BACKUP_VOL":/to alpine ash -c "cp -a /from/. /to"
+    echo "Removing $VOL"
+    docker volume rm -f "$VOL" > /dev/null
+}
+
+# Stop idle containers
+function stop_idles
+{
+    # Stop messages
+    INACTIVE="Changed application state from 'ready' to 'closing_window'"
+    ERROR="Connection got disposed"
+
+    # 30 min timeout
+    TIMEOUT=1800
+
+    # Loop thru running containers
+    for CONTAINER in $(docker ps --filter ancestor=zedchance/theia-sierra-ubuntu:latest --format "{{.Names}}")
+    do
+        # For each of the last 11 log entries
+        docker container logs -t -n 11 "$CONTAINER" | while read -r entry
+        do
+            # Timestamp is the first 19 chars of the log
+            TIMESTAMP=${entry:0:19}
+
+            # Check to see if the log entry is the inactive message
+            if [[ $entry == *"$INACTIVE"* || $entry == *"$ERROR"* ]]
+            then
+                # Current time
+                NOW=$(date +%s)
+
+                # Date command on macOS
+                THEN=$(date -jf "%Y-%m-%dT%H:%M:%S" "$TIMESTAMP" "+%s")
+                # Date command on linux
+                # THEN=$(date -d "$TIMESTAMP" +%s)
+
+                # Calculate idle time
+                # +28800 to compensate for PST to UTC, fix this
+                DIFF=$((NOW - THEN + 28800))
+                IDLE_MIN=$((DIFF / 60))
+
+                # Verbose dry run
+                if [[ $1 == "-v" ]]
+                then
+                    echo "Closed container found: $CONTAINER"
+                    echo "    Log: ${entry:31:100}"
+                    echo "    Timestamp: $TIMESTAMP"
+                    echo "    $CONTAINER has been idle for $IDLE_MIN minutes"
+                    break
+                fi
+
+                # Check to see if container has timed out
+                if [[ $DIFF -gt $TIMEOUT ]]
+                then
+                    echo "$CONTAINER has exceeded time out, stopping..."
+                    docker stop "$CONTAINER" > /dev/null
+                fi
+
+                # Break because we found the inactive/error message
+                break
+            fi
+        done
+    done
+}
+
+# Main
+case $1 in
+    "start")
+        start $2 $3
+        ;;
+    "stop")
+        stop $2
+        ;;
+    "reset")
+        reset $2
+        ;;
+    "ps")
+        docker ps -a --filter ancestor=zedchance/theia-sierra-ubuntu --format "table {{.Names}}\t{{.State}}\t{{.Status}}\t{{.Mounts}}\t{{.Size}}"
+        ;;
+    "pull")
+        pull
+        ;;
+    "new-vol")
+        new_vol $2
+        ;;
+    "stop-idles")
+        stop_idles $2
+        ;;
+    *)
+        usage "[start|stop|reset|ps|pull|new-vol|stop-idles]"
+        ;;
+esac
+
