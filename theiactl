@@ -221,6 +221,7 @@ function ps
     local ancestors=(
         "--filter ancestor=zedchance/theia-base"
         "--filter ancestor=zedchance/theia-cs46"
+        "--filter ancestor=zedchance/theia-cs66"
     )
 
     # Check if only names should be listed
