@@ -36,29 +36,33 @@ function start
         exit
     fi
 
-    # Create container and get ID
+    # Start parameters
+    parameters=(
+        "--security-opt seccomp=unconfined"
+        "--init"
+        "-it"
+        "--mount source=$VOLUME_NAME,target=/home"
+        "-u 1000:1000"
+    )
+
+    # Figure out whether to add to network or publish to port
     if [[ "$PORT" == "" ]]
     then
         echo "Creating container from $IMAGE, adding to theia-net"
-        CONTAINER_ID=$(docker create --security-opt seccomp=unconfined \
-                                     --init \
-                                     -it \
-                                     --mount source="$VOLUME_NAME",target=/home \
-                                     --network theia-net \
-                                     -u 1000:1000 \
-                                     --name "$CONTAINER_NAME" \
-                                     "$IMAGE")
+        parameters+=("--network theia-net")
     else
         echo "Creating container from $IMAGE on port $PORT"
-        CONTAINER_ID=$(docker create --security-opt seccomp=unconfined \
-                                     --init \
-                                     -it \
-                                     --mount source="$VOLUME_NAME",target=/home \
-                                     -p 127.0.0.1:"$PORT":3000 \
-                                     -u 1000:1000 \
-                                     --name "$CONTAINER_NAME" \
-                                     "$IMAGE")
+        parameters+=("-p 127.0.0.1:$PORT:3000")
     fi
+
+    # Add container name and image to parameter list
+    parameters+=(
+        "--name $CONTAINER_NAME"
+        "$IMAGE"
+    )
+
+    # Create the container
+    CONTAINER_ID=$(docker create ${parameters[@]/#/})
 
     # Start container
     echo "Starting container"
