@@ -121,6 +121,7 @@ function pull
 {
     docker pull zedchance/theia-base:latest
     docker pull zedchance/theia-cs46:latest
+    docker pull zedchance/theia-cs66:latest
 }
 
 # Backup a container's volume, and create a new one
