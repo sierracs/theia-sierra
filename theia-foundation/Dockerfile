@@ -1,4 +1,4 @@
-# theia-base Dockerfile (adapted from theia-cpp-docker Dockerfile)
+# theia-foundation Dockerfile (adapted from theia-cpp-docker Dockerfile)
 
 FROM ubuntu:20.04
 WORKDIR /
@@ -94,25 +94,5 @@ RUN rm -rf /home && \
 # Allow sudo use without password
     echo "%theia ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# Theia application
-USER theia
-WORKDIR /theia
-COPY $version.package.json ./package.json
-
-RUN yarn --pure-lockfile && \
-    NODE_OPTIONS="--max_old_space_size=4096" yarn theia build && \
-    yarn theia download:plugins && \
-    yarn --production && \
-    yarn autoclean --init && \
-    echo *.ts >> .yarnclean && \
-    echo *.ts.map >> .yarnclean && \
-    echo *.spec.* >> .yarnclean && \
-    yarn autoclean --force && \
-    yarn cache clean
-
-EXPOSE 3000
-ENV SHELL=/bin/bash \
-    THEIA_DEFAULT_PLUGINS=local-dir:/theia/plugins
-
-ENTRYPOINT [ "node", "/theia/src-gen/backend/main.js", "/home", "--hostname=0.0.0.0" ]
+# This image is not runable, it is ready for a child image to build theia
 
