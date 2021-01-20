@@ -12,6 +12,7 @@ RUN apt-get update && \
                        clang \
                        gdb \
                        valgrind \
+                       inetutils-ping \
                        libssl-dev && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
