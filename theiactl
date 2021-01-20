@@ -159,7 +159,7 @@ function stop_idles
     TIMEOUT=1800
 
     # Loop thru running containers
-    for CONTAINER in $(docker ps --filter ancestor=zedchance/theia-base --format "{{.Names}}")
+    for CONTAINER in $(ps names)
     do
         # For each of the last 11 log entries
         docker container logs -t -n 11 "$CONTAINER" | while read -r entry
@@ -206,6 +206,28 @@ function stop_idles
     done
 }
 
+# List all theia containers
+function ps
+{
+    # Ancestors array
+    local ancestors=(
+        "--filter ancestor=zedchance/theia-base"
+        "--filter ancestor=zedchance/theia-cs46"
+    )
+
+    # Check if only names should be listed
+    if [[ $1 == "names" ]]
+    then
+        FORMAT="{{.Names}}"
+    else
+        FORMAT="table {{.Names}}\t{{.State}}\t{{.Status}}\t{{.Image}}\t{{.Mounts}}\t{{.Size}}"
+    fi
+
+    # List the containers
+    # Array expansion of parameters https://unix.stackexchange.com/a/29521
+    docker ps -a ${ancestors[@]/#/} --format "$FORMAT"
+}
+
 # Main
 case $1 in
     "start")
@@ -218,9 +240,7 @@ case $1 in
         remove $2 $3
         ;;
     "ps")
-        docker ps -a --filter ancestor=zedchance/theia-base \
-                     --filter ancestor=zedchance/theia-cs46 \
-                     --format "table {{.Names}}\t{{.State}}\t{{.Status}}\t{{.Image}}\t{{.Mounts}}\t{{.Size}}"
+        ps $2
         ;;
     "pull")
         pull
