@@ -2,6 +2,7 @@
 
 This Theia IDE has all the necessary C++ tools for the CS66 class.
 
+- `clang`
 - `clangd`
 - `doxygen`
 

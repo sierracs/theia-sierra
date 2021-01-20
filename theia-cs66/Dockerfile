@@ -1,7 +1,7 @@
 # theia-cs66
 # Theia image workspace setup for CS66 class
 
-FROM zedchance/theia-base:latest
+FROM zedchance/theia-foundation:latest
 WORKDIR /
 ENV DEBIAN_FRONTEND noninteractive
 USER root
@@ -19,7 +19,25 @@ RUN apt-get update && \
 # Add welcome message
 COPY WELCOME.md /home/
 
-# Theia package.json
+# Theia application
+USER theia
 WORKDIR /theia
-ADD latest.package.json ./package.json
+COPY latest.package.json ./package.json
+
+RUN yarn --pure-lockfile && \
+    NODE_OPTIONS="--max_old_space_size=4096" yarn theia build && \
+    yarn theia download:plugins && \
+    yarn --production && \
+    yarn autoclean --init && \
+    echo *.ts >> .yarnclean && \
+    echo *.ts.map >> .yarnclean && \
+    echo *.spec.* >> .yarnclean && \
+    yarn autoclean --force && \
+    yarn cache clean
+
+EXPOSE 3000
+ENV SHELL=/bin/bash \
+    THEIA_DEFAULT_PLUGINS=local-dir:/theia/plugins
+
+ENTRYPOINT [ "node", "/theia/src-gen/backend/main.js", "/home", "--hostname=0.0.0.0" ]
 
