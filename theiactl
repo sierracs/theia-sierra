@@ -29,12 +29,15 @@ function start
     VOLUME_NAME=vol-"$USERNAME"-"$WKSP"-"$N"
 
     # First check to see if container already exists
-    if [[ $(docker ps -a --filter "name=$CONTAINER_NAME" --format "{{.Names}}") == $CONTAINER_NAME ]]
+    if [[ $(docker ps -a --filter "name=$CONTAINER_NAME" --format "{{.Names}}") == "$CONTAINER_NAME" ]]
     then
         echo "Starting $CONTAINER_NAME"
         docker start "$CONTAINER_NAME" > /dev/null
         exit
     fi
+
+    # Exit on command fail
+    set -e
 
     # Start parameters
     parameters=(
@@ -62,15 +65,15 @@ function start
     )
 
     # Create the container
-    CONTAINER_ID=$(docker create ${parameters[@]/#/})
+    docker create ${parameters[@]/#/}
 
     # Start container
     echo "Starting container"
-    docker start "$CONTAINER_ID"
+    docker start "$CONTAINER_NAME"
 
     # Rename user to specified whoami
     echo "Renaming user to $USERNAME"
-    docker exec -u root "$CONTAINER_ID" usermod -l "$USERNAME" theia
+    docker exec -u root "$CONTAINER_NAME" usermod -l "$USERNAME" theia
 }
 
 # Stop a running container
