@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # theia controller
-VERSION="v0.1.2"
+VERSION="v0.1.3"
 
 # General usage
 function usage
@@ -120,6 +120,7 @@ function remove
 # Pull latest theia images
 function pull
 {
+    echo "$(date): Pulling latest theia images"
     docker pull zedchance/theia-cs46:latest
     docker pull zedchance/theia-cs66:latest
 }
