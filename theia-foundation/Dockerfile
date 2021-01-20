@@ -9,9 +9,6 @@ ARG NODE_VERSION=12.18.3
 ENV NODE_VERSION $NODE_VERSION
 ENV YARN_VERSION 1.22.5
 
-# Base package file
-ARG version=latest
-
 # Common deps
 RUN apt-get update && \
     apt-get -y install build-essential \
