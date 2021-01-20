@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # theia controller
+VERSION="v0.1.0"
 
 # General usage
 function usage
@@ -259,6 +260,9 @@ case $1 in
         ;;
     "stop-idles")
         stop_idles $2
+        ;;
+    "version")
+        echo $VERSION
         ;;
     *)
         usage "[start|stop|rm|ps|pull|new-vol|stop-idles]"
