@@ -11,6 +11,7 @@ theiactl start username wksp   # start a container
 theiactl stop username wksp    # stop a container
 theiactl rm username wksp      # remove a container
 theiactl new-vol username wksp # backup and remove volume (runs rm first)
+theiactl state username wksp   # return the state of a container
 theiactl pull                  # pull latest images
 theiactl ps                    # list all theia containers
 theiactl stop-idles            # stop idle containers

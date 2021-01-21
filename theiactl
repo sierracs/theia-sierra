@@ -282,7 +282,7 @@ case $1 in
         echo $VERSION
         ;;
     *)
-        usage "[start|stop|rm|ps|pull|new-vol|stop-idles|version]"
+        usage "[start|stop|rm|state|ps|pull|new-vol|stop-idles|version]"
         ;;
 esac
 
