@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # theia controller
-VERSION="v0.1.3"
+VERSION="v0.2.0"
 
 # General usage
 function usage
@@ -149,6 +149,12 @@ function new_vol
     # Reset the container
     remove "$USERNAME" "$WKSP"
 
+    # Check if theres already a prev vol, if so rm it
+    if docker volume inspect "$BACKUP_VOL" > /dev/null
+    then
+        docker volume rm -f "$BACKUP_VOL" > /dev/null
+    fi
+
     # Backup volume and remove it
     echo "Backing up $VOL to $BACKUP_VOL"
     docker volume create --name "$BACKUP_VOL" > /dev/null
@@ -228,6 +234,24 @@ function ps
     fi
 }
 
+# Return the state of a given container
+function state
+{
+    # Usage
+    USERNAME=$1
+    WKSP=$2
+    if [[ "$USERNAME" == "" || "$WKSP" == "" ]]
+    then
+        usage "state name wksp"
+    fi
+
+    N=1  # for multiple containers in the future
+    CONTAINER_NAME=theia-"$USERNAME"-"$WKSP"-"$N"
+
+    # Show state
+    docker ps -a --filter "name=$CONTAINER_NAME" --format="{{.State}}"
+}
+
 # Main
 case $1 in
     "start")
@@ -250,6 +274,9 @@ case $1 in
         ;;
     "stop-idles")
         stop_idles $2
+        ;;
+    "state")
+        state $2 $3
         ;;
     "version")
         echo $VERSION
