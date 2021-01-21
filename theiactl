@@ -320,8 +320,12 @@ case $1 in
     "version")
         echo $VERSION
         ;;
+    "help")
+        echo "USAGE: theiactl [start|stop|state|rm|new-vol|recover] name wksp"
+        echo "USAGE: theiactl [ps|pull|stop-idles|version]"
+        ;;
     *)
-        usage "[start|stop|rm|state|ps|pull|new-vol|stop-idles|version]"
+        usage "help"
         ;;
 esac
 
