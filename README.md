@@ -26,7 +26,8 @@ theiactl recover username wksp # restore contents from backup vol
 
 ```
 theiactl pull                  # pull latest images
-theiactl ps                    # list all theia containers
+theiactl ps                    # list all running theia containers
+theiactl ps name               # list all containers by name
 theiactl stop-idles            # stop idle containers
 theiactl stop-idles -v         # verbose dry run
 theiactl version               # display version
