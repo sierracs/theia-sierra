@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # theia controller
-VERSION="v0.2.0"
+VERSION="v0.3.0"
 
 # General usage
 function usage
@@ -163,6 +163,42 @@ function new_vol
     docker volume rm -f "$VOL" > /dev/null
 }
 
+# Recover a backup vol (opposite of new-vol)
+function recover
+{
+    # Usage
+    USERNAME=$1
+    WKSP=$2
+    if [[ "$USERNAME" == "" || "$WKSP" == "" ]]
+    then
+        usage "recover name wksp"
+    fi
+
+    N=1
+    VOL=vol-"$USERNAME"-"$WKSP"-"$N"
+    BACKUP_VOL="$VOL"-prev
+
+    # Make sure the backup volume exists
+    if ! docker volume inspect "$BACKUP_VOL" > /dev/null
+    then
+        exit
+    fi
+
+    # Reset the container
+    remove "$USERNAME" "$WKSP"
+
+    # rm the current volume, and create a fresh one
+    if docker volume inspect "$VOL" > /dev/null
+    then
+        docker volume rm -f "$VOL" > /dev/null
+        docker volume create --name "$VOL" > /dev/null
+    fi
+
+    # Backup volume and remove it
+    echo "Recovering $BACKUP_VOL to $VOL"
+    docker run --rm -it -v "$BACKUP_VOL":/from -v "$VOL":/to alpine ash -c "cp -a /from/. /to"
+}
+
 # Stop idle containers
 function stop_idles
 {
@@ -271,6 +307,9 @@ case $1 in
         ;;
     "new-vol")
         new_vol $2 $3
+        ;;
+    "recover")
+        recover $2 $3
         ;;
     "stop-idles")
         stop_idles $2
