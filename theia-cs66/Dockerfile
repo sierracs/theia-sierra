@@ -10,6 +10,8 @@ USER root
 RUN apt-get update && \
     apt-get -y install cmake \
                        clang \
+                       libssl-dev \
+                       valgrind \
                        clangd \
                        doxygen \
                        gdb && \
