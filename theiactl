@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # theia controller
-VERSION="v0.4.0"
+VERSION="v0.5.0"
 
 # General usage
 function usage
@@ -203,58 +203,46 @@ function recover
 # Stop idle containers
 function stop_idles
 {
-    # Stop messages
-    INACTIVE="Changed application state from 'ready' to 'closing_window'"
-    ERROR="Connection got disposed"
-
-    # 30 min timeout
-    TIMEOUT=1800
+    # 60 min timeout
+    TIMEOUT=3600
 
     # Loop thru running containers
     for CONTAINER in $(ps names)
     do
-        # For each of the last 11 log entries
-        docker container logs -t -n 11 "$CONTAINER" | while read -r entry
-        do
-            # Timestamp is the first 30 chars of the log
-            TIMESTAMP=${entry:0:30}
+        # Container log
+        LOG=$(docker container logs -t -n 1 "$CONTAINER")
 
-            # Check to see if the log entry is the inactive message
-            if [[ $entry == *"$INACTIVE"* || $entry == *"$ERROR"* ]]
-            then
-                # Current time
-                NOW=$(date +%s)
+        # Timestamp is the first 30 chars of the log
+        TIMESTAMP=${entry:0:30}
 
-                # Date command on macOS
-                # THEN=$(date -jf "%Y-%m-%dT%H:%M:%S" "$TIMESTAMP" "+%s")
-                # Date command on linux
-                THEN=$(date -d "$TIMESTAMP" +%s)
+        # Current time
+        NOW=$(date +%s)
 
-                # Calculate idle time
-                DIFF=$((NOW - THEN))
-                IDLE_MIN=$((DIFF / 60))
+        # Date command on macOS
+        # THEN=$(date -jf "%Y-%m-%dT%H:%M:%S" "$TIMESTAMP" "+%s")
+        # Date command on linux
+        THEN=$(date -d "$TIMESTAMP" +%s)
 
-                # Verbose dry run
-                if [[ $1 == "-v" ]]
-                then
-                    echo "Closed container found: $CONTAINER"
-                    echo "    Log: ${entry:31:100}"
-                    echo "    Timestamp: $TIMESTAMP"
-                    echo "    $CONTAINER has been idle for $IDLE_MIN minutes"
-                    break
-                fi
+        # Calculate idle time
+        DIFF=$((NOW - THEN))
+        IDLE_MIN=$((DIFF / 60))
 
-                # Check to see if container has timed out
-                if [[ $DIFF -gt $TIMEOUT ]]
-                then
-                    echo "$(date): $CONTAINER has exceeded time out, stopping..."
-                    docker stop "$CONTAINER" > /dev/null
-                fi
+        # Verbose dry run
+        if [[ $1 == "-v" ]]
+        then
+            echo "$CONTAINER"
+            echo "    Log: ${entry:31:100}"
+            echo "    Timestamp: $TIMESTAMP"
+            echo "    $CONTAINER has been idle for $IDLE_MIN minutes"
+            break
+        fi
 
-                # Break because we found the inactive/error message
-                break
-            fi
-        done
+        # Check to see if container has timed out
+        if [[ $DIFF -gt $TIMEOUT ]]
+        then
+            echo "$(date): $CONTAINER has exceeded time out, stopping..."
+            docker stop "$CONTAINER" > /dev/null
+        fi
     done
 }
 
