@@ -213,7 +213,7 @@ function stop_idles
         LOG=$(docker container logs -t -n 1 "$CONTAINER")
 
         # Timestamp is the first 30 chars of the log
-        TIMESTAMP=${entry:0:30}
+        TIMESTAMP=${LOG:0:30}
 
         # Current time
         NOW=$(date +%s)
@@ -231,10 +231,10 @@ function stop_idles
         if [[ $1 == "-v" ]]
         then
             echo "$CONTAINER"
-            echo "    Log: ${entry:31:100}"
+            echo "    Log: ${LOG:31:100}"
             echo "    Timestamp: $TIMESTAMP"
             echo "    $CONTAINER has been idle for $IDLE_MIN minutes"
-            break
+            continue
         fi
 
         # Check to see if container has timed out
