@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # theia controller
-VERSION="v0.5.0"
+VERSION="v0.5.1"
 
 # General usage
 function usage
@@ -203,43 +203,23 @@ function recover
 # Stop idle containers
 function stop_idles
 {
-    # 60 min timeout
-    TIMEOUT=3600
-
     # Loop thru running containers
     for CONTAINER in $(ps names)
     do
-        # Container log
-        LOG=$(docker container logs -t -n 1 "$CONTAINER")
+        # Check for activity
+        CHECK=$(docker exec $CONTAINER bash -c "find /dev/pts /home -mmin -60 -print -quit")
 
-        # Timestamp is the first 30 chars of the log
-        TIMESTAMP=${LOG:0:30}
-
-        # Current time
-        NOW=$(date +%s)
-
-        # Date command on macOS
-        # THEN=$(date -jf "%Y-%m-%dT%H:%M:%S" "$TIMESTAMP" "+%s")
-        # Date command on linux
-        THEN=$(date -d "$TIMESTAMP" +%s)
-
-        # Calculate idle time
-        DIFF=$((NOW - THEN))
-        IDLE_MIN=$((DIFF / 60))
-
-        # Verbose dry run
-        if [[ $1 == "-v" ]]
+        # If empty, then no activity
+        if [[ "$CHECK" == "" ]]
         then
-            echo "$CONTAINER"
-            echo "    Log: ${LOG:31:100}"
-            echo "    Timestamp: $TIMESTAMP"
-            echo "    $CONTAINER has been idle for $IDLE_MIN minutes"
-            continue
-        fi
+            # Verbose dry run
+            if [[ $1 == "-v" ]]
+            then
+                echo "$CONTAINER is idle"
+                continue
+            fi
 
-        # Check to see if container has timed out
-        if [[ $DIFF -gt $TIMEOUT ]]
-        then
+            # Stop the container
             echo "$(date): $CONTAINER has exceeded time out, stopping..."
             docker stop "$CONTAINER" > /dev/null
         fi
