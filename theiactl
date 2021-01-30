@@ -44,10 +44,11 @@ function start
     parameters=(
         "--security-opt seccomp=unconfined"
         "--init"
-        "-it"
+        "--interactive"
+        "--tty"
         "--mount source=$VOLUME_NAME,target=/home"
-        "-u 1000:1000"
-        "-m 1g"
+        "--user 1000:1000"
+        "--memory 1g"
     )
 
     # Figure out whether to add to network or publish to port
@@ -57,7 +58,7 @@ function start
         parameters+=("--network theia-net")
     else
         echo "Creating container from $IMAGE on port $PORT"
-        parameters+=("-p 127.0.0.1:$PORT:3000")
+        parameters+=("--publish 127.0.0.1:$PORT:3000")
     fi
 
     # Add container name and image to parameter list
