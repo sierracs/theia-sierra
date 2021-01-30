@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # theia controller
-VERSION="v0.6.0"
+VERSION="v0.7.0"
 
 # General usage
 function usage
@@ -29,6 +29,13 @@ function start
     CONTAINER_NAME=theia-"$USERNAME"-"$WKSP"-"$N"
     VOLUME_NAME=vol-"$USERNAME"-"$WKSP"-"$N"
 
+    # If container doesn't have the 'core-enabled' label, remove the container
+    if [[ $(docker ps -a --filter "name=$CONTAINER_NAME" --format "{{.Labels}}") != "core-enabled=true" ]]
+    then
+        echo "Outdated start parameters, removing container $CONTAINER_NAME"
+        remove "$USERNAME" "$WKSP"
+    fi
+
     # First check to see if container already exists
     if [[ $(docker ps -a --filter "name=$CONTAINER_NAME" --format "{{.Names}}") == "$CONTAINER_NAME" ]]
     then
@@ -50,6 +57,7 @@ function start
         "--user 1000:1000"
         "--memory 1g"
         "--ulimit core=-1"
+        "--label core-enabled=true"
     )
 
     # Figure out whether to add to network or publish to port
