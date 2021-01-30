@@ -49,6 +49,7 @@ function start
         "--mount source=$VOLUME_NAME,target=/home"
         "--user 1000:1000"
         "--memory 1g"
+        "--ulimit core=-1"
     )
 
     # Figure out whether to add to network or publish to port
