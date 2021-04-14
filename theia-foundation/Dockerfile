@@ -18,6 +18,7 @@ RUN apt-get update && \
                        python \
                        gpg \
                        wget \
+                       vim \
                        xz-utils && \
     rm -rf /var/lib/apt/lists/* && \
 #Install node and yarn
