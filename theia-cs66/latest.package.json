@@ -1,7 +1,7 @@
 {
     "private": true,
     "name": "theia-cs66",
-    "version": "0.2.6",
+    "version": "0.2.7",
     "theia": {
         "frontend": {
             "config": {
