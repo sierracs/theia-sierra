@@ -14,6 +14,7 @@ RUN apt-get update && \
                        valgrind \
                        clangd \
                        doxygen \
+                       libsecret-1-dev \
                        gdb && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean

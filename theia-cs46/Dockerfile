@@ -13,6 +13,7 @@ RUN apt-get update && \
                        gdb \
                        valgrind \
                        inetutils-ping \
+                       libsecret-1-dev \
                        libssl-dev && \
     rm -rf /var/lib/apt/lists/* && \
     apt-get clean
