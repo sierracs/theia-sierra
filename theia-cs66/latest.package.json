@@ -1,7 +1,7 @@
 {
     "private": true,
     "name": "theia-cs66",
-    "version": "0.2.10",
+    "version": "0.2.11",
     "theia": {
         "frontend": {
             "config": {
@@ -19,7 +19,6 @@
         "@theia/callhierarchy": "latest",
         "@theia/console": "latest",
         "@theia/core": "latest",
-        "@theia/cpp-debug": "latest",
         "@theia/debug": "latest",
         "@theia/editor": "latest",
         "@theia/editor-preview": "latest",
@@ -125,6 +124,7 @@
         "vscode-builtin-yaml": "https://github.com/theia-ide/vscode-builtin-extensions/releases/download/v1.39.1-prel/yaml-1.39.1-prel.vsix",
         "vscode-clangd": "https://open-vsx.org/api/llvm-vs-code-extensions/vscode-clangd/0.1.7/file/llvm-vs-code-extensions.vscode-clangd-0.1.7.vsix",
         "vscode-editorconfig": "https://github.com/theia-ide/editorconfig-vscode/releases/download/v0.14.4/EditorConfig-0.14.4.vsix",
+        "cdt-gdb-vscode": "https://open-vsx.org/api/eclipse-cdt/cdt-gdb-vscode/0.0.92/file/eclipse-cdt.cdt-gdb-vscode-0.0.92.vsix",
         "cschlosser.doxdocgen": "https://open-vsx.org/api/cschlosser/doxdocgen/1.1.0/file/cschlosser.doxdocgen-1.1.0.vsix"
     }
 }
