@@ -21,7 +21,7 @@ Currently these build scripts use the `amd64` architecture to match the Linode m
 ## How to update to latest Theia release
 
 The `package.json` file declares what packages get installed in Theia.
-When a new Theia release comes out I simply **update the version number in these `packge.json` files** and re-build the image using the build script.
+When a new Theia release comes out I simply **update the version number in the `package.json` files** and re-build the image using the build script.
 Once you have confirmed that the new image works locally, **push your changes to the `package.json` file to trigger the GitHub action** to build and push the new images to the Docker hub.
 
 See [this commit](https://github.com/zedchance/theia-sierra/commit/d8adfdeb996ea61901d79e09ac1fda9977505554) to get an idea of all that is needed to trigger the GitHub action to build the 46 and 66 images.
