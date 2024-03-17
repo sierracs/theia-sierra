@@ -1,0 +1,101 @@
+{
+  "private": true,
+  "name": "theia-cs39",
+  "version": "1.30.0-cs39",
+  "license": "EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0",
+  "theia": {
+    "frontend": {
+      "config": {
+        "applicationName": "Theia IDE for CS39",
+        "preferences": {
+          "files.enableTrash": false,
+	  "files.exclude": {
+                        ".*": true
+	  }
+        }
+      }
+    }
+  },
+  "dependencies": {
+    "@theia/callhierarchy": "latest",
+    "@theia/console": "latest",
+    "@theia/core": "latest",
+    "@theia/debug": "latest",
+    "@theia/editor": "latest",
+    "@theia/editor-preview": "latest",
+    "@theia/file-search": "latest",
+    "@theia/filesystem": "latest",
+    "@theia/getting-started": "latest",
+    "@theia/git": "latest",
+    "@theia/keymaps": "latest",
+    "@theia/messages": "latest",
+    "@theia/metrics": "latest",
+    "@theia/mini-browser": "latest",
+    "@theia/monaco": "latest",
+    "@theia/navigator": "latest",
+    "@theia/outline-view": "latest",
+    "@theia/output": "latest",
+    "@theia/plugin-dev": "latest",
+    "@theia/plugin-ext": "latest",
+    "@theia/plugin-ext-vscode": "latest",
+    "@theia/plugin-metrics": "latest",
+    "@theia/preferences": "latest",
+    "@theia/preview": "latest",
+    "@theia/process": "latest",
+    "@theia/property-view": "latest",
+    "@theia/scm": "latest",
+    "@theia/scm-extra": "latest",
+    "@theia/search-in-workspace": "latest",
+    "@theia/task": "latest",
+    "@theia/terminal": "latest",
+    "@theia/timeline": "latest",
+    "@theia/toolbar": "latest",
+    "@theia/typehierarchy": "latest",
+    "@theia/userstorage": "latest",
+    "@theia/variable-resolver": "latest",
+    "@theia/vsx-registry": "latest",
+    "@theia/workspace": "latest"
+  },
+  "scripts": {
+    "clean": "theia clean",
+    "build": "yarn -s compile && yarn -s bundle",
+    "bundle": "theia build --mode development",
+    "compile": "tsc -b",
+    "coverage": "yarn -s test --test-coverage && yarn -s coverage:report",
+    "coverage:clean": "rimraf .nyc_output && rimraf coverage",
+    "coverage:report": "nyc report --reporter=html",
+    "rebuild": "theia rebuild:browser --cacheRoot ../..",
+    "start": "yarn -s rebuild && theia start --plugins=local-dir:/theia/plugins",
+    "start:debug": "yarn -s start --log-level=debug",
+    "start:watch": "concurrently --kill-others -n tsc,bundle,run -c red,yellow,green \"tsc -b -w --preserveWatchOutput\" \"yarn -s watch:bundle\" \"yarn -s start\"",
+    "test": "yarn -s rebuild && theia test . --plugins=local-dir:/theia/plugins --test-spec=../api-tests/**/*.spec.js",
+    "test:debug": "yarn -s test --test-inspect",
+    "watch": "concurrently --kill-others -n tsc,bundle -c red,yellow \"tsc -b -w --preserveWatchOutput\" \"yarn -s watch:bundle\"",
+    "watch:bundle": "theia build --watch --mode development",
+    "watch:compile": "tsc -b -w"
+  },
+  "devDependencies": {
+    "@theia/cli": "latest"
+  },
+  "theiaPluginsDir": "plugins",
+  "theiaPlugins": {
+    "vscode-builtin-extensions-pack": "https://open-vsx.org/api/eclipse-theia/builtin-extension-pack/1.64.0-next.68976705968/file/eclipse-theia.builtin-extension-pack-1.64.0-next.68976705968.vsix",
+    "webfreak.debug": "https://open-vsx.org/api/webfreak/debug/0.25.1/file/webfreak.debug-0.25.1.vsix"
+  },
+  "theiaPluginsExcludeIds": [
+    "vscode.bat",
+    "vscode.extension-editing",
+    "vscode.grunt",
+    "vscode.gulp",
+    "vscode.hlsl",
+    "vscode.jake",
+    "vscode.julia",
+    "vscode.microsoft-authentication",
+    "vscode.powershell",
+    "vscode.razor",
+    "vscode.shaderlab",
+    "vscode.swift",
+    "vscode.vb",
+    "vscode.dart"
+  ]
+}

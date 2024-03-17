@@ -1,0 +1,4 @@
+alias gcc=arm-linux-gnueabi-gcc
+alias arm32='qemu-arm -L /usr/arm-linux-gnueabi/'
+alias as=arm-linux-gnueabi-as
+alias ld=arm-linux-gnueabi-ld

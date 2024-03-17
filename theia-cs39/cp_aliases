@@ -1,0 +1,18 @@
+#! /bin/bash
+
+# This script is used to copy a new bash_aliases file into the
+# existing cs39 containers.
+
+# Get list of cs39 volumes
+VOLS=$(docker volume ls | grep cs39 | awk '{print $2}')
+
+for vol in $VOLS; do
+	# For each volume, start an alpine container with the volume attached
+	docker run --name temp_alpy --rm -d --mount source=${vol},target=/home alpine sleep 2
+
+	# Copy the bash_aliases file into /home/.bash_aliases
+	docker cp bash_aliases temp_alpy:/home/.bash_aliases
+
+	# Stop the container and remove it
+	docker stop temp_alpy
+done
