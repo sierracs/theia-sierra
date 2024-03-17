@@ -1,45 +1,67 @@
 # theia-cs46
 # Theia image workspace setup for CS46 class
 
-FROM zedchance/theia-foundation:latest
+FROM ubuntu-cs46:latest
 WORKDIR /
-ENV DEBIAN_FRONTEND noninteractive
+ARG DEBIAN_FRONTEND=noninteractive
 USER root
 
-# Install CS46 required libs
-RUN apt-get update && \
-    apt-get -y install cmake \
-                       clang \
-                       gdb \
-                       valgrind \
-                       inetutils-ping \
-                       libsecret-1-dev \
-                       libssl-dev && \
-    rm -rf /var/lib/apt/lists/* && \
-    apt-get clean
+# User account
+RUN <<EOF
+LOCAL_USER=$(awk -F: '$3 == 2000 { print $1 }' /etc/passwd)
+deluser --remove-home $LOCAL_USER
+delgroup $LOCAL_USER
+addgroup --gid 2000 theia
+adduser --disabled-password --gecos '' --home /home --gid 2000 --uid 2000 theia
+chmod g+rw /home
+# Allow sudo use without password
+echo "%theia ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+EOF
 
 # Add welcome message
-COPY WELCOME.md /home/
+COPY --chown=2000:2000 WELCOME.md /home/
+
+# Default settings
+COPY --chown=2000:2000 settings.json /home/.theia/
+
+# Start script
+COPY --chmod=755 theia-entrypoint /theia/theia-entrypoint
+
+# Watchdog script
+COPY --chmod=755 watchdog /theia/watchdog
+
+# Theia install location
+RUN <<EOF
+mkdir -p /theia
+chown -R theia:theia /theia
+EOF
 
 # Theia application
 USER theia
 WORKDIR /theia
 COPY latest.package.json ./package.json
 
-RUN yarn --pure-lockfile && \
-    NODE_OPTIONS="--max_old_space_size=4096" yarn theia build && \
-    yarn theia download:plugins && \
-    yarn --production && \
-    yarn autoclean --init && \
-    echo *.ts >> .yarnclean && \
-    echo *.ts.map >> .yarnclean && \
-    echo *.spec.* >> .yarnclean && \
-    yarn autoclean --force && \
-    yarn cache clean
+RUN <<EOF
+yarn
+yarn theia build
+yarn theia download:plugins --ignore-errors
+yarn autoclean --init
+echo *.ts >> .yarnclean
+echo *.ts.map >> .yarnclean
+echo *.spec.* >> .yarnclean
+yarn autoclean --force
+yarn cache clean
+rm -rf /home/.cache /home/.npm /home/.yarn
+EOF
+
 
 EXPOSE 3000
 ENV SHELL=/bin/bash \
+    INIT_CWD=/home \
+    PWD=/home \
     THEIA_DEFAULT_PLUGINS=local-dir:/theia/plugins
 
-ENTRYPOINT [ "node", "/theia/src-gen/backend/main.js", "/home", "--hostname=0.0.0.0" ]
+USER theia
+WORKDIR /home
 
+ENTRYPOINT ["/theia/theia-entrypoint"]
