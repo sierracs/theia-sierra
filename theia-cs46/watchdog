@@ -1,0 +1,15 @@
+#! /bin/bash
+
+# Find and kill processes owned by the user (uid 2000),
+# that have been used more than 120 seconds of CPU time
+# and are using more than 50% of a CPU. Executable
+# must reside under /home.
+ps -U 2000 -o uname,pid,pcpu,times,comm \
+| awk '$4 > 120 { print $1, $2, $5 }' \
+| while read uname pid cmd; do 
+	exe=$(readlink /proc/$pid/exe)
+	if echo $exe | grep -q '^/home'; then 
+		echo $(date): Runaway process. Killing $uname $exe
+		kill $pid
+	fi
+done

@@ -1,0 +1,23 @@
+#! /bin/bash
+
+if [ $UID -eq 0 ]; then
+    if getent passwd theia > /dev/null; then
+        if [ "$USER" != "" ]; then
+            usermod -l "$USER" theia
+	fi
+    fi
+
+    # Update ownership of files from old UID (1000) to new (2000)
+    if [ $(stat -c "%u" /home) -ne 2000 ]; then
+        chown -R 2000:2000 /home
+    fi
+
+    cd /theia
+    exec runuser -u "$USER" -- yarn theia start /home --hostname 0.0.0.0 --port 3000
+elif [ $UID -eq 2000 ]; then
+    cd /theia
+    exec yarn theia start /home --hostname 0.0.0.0 --port 3000
+else
+    cd /home
+    exec /bin/bash
+fi
