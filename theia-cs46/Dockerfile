@@ -63,7 +63,6 @@ ENV SHELL=/bin/bash \
 
 COPY --chmod=0700 --chown=0:0 mhf-config.yml /etc/matchhostfsowner/config.yml
 
-#USER theia
 WORKDIR /home
 
 ENTRYPOINT ["/theia/theia-entrypoint"]
