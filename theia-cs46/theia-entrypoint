@@ -4,16 +4,14 @@ if [ $UID -eq 0 ]; then
     if getent passwd theia > /dev/null; then
         if [ "$USER" != "" ]; then
             usermod -l "$USER" theia
+	    sed -i "/app_account/s/theia/$USER/" /etc/matchhostfsowner/config.yml
 	fi
     fi
 
-    # Update ownership of files from old UID (1000) to new (2000)
-    if [ $(stat -c "%u" /home) -ne 2000 ]; then
-        chown -R 2000:2000 /home
-    fi
-
-    cd /theia
-    exec runuser -u "$USER" -- yarn theia start /home --hostname 0.0.0.0 --port 3000
+    # Change file permissions to match host user.
+    # That will, in turn, call this script again, except the UID will be 2000
+    MHF_HOST_UID=2000 MHF_HOST_GID=2000 \
+    exec /sbin/matchhostfsowner /theia/theia-entrypoint
 elif [ $UID -eq 2000 ]; then
     cd /theia
     exec yarn theia start /home --hostname 0.0.0.0 --port 3000

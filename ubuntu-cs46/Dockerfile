@@ -79,6 +79,10 @@ ln -s /opt/yarn/bin/yarn /usr/local/bin/yarnpkg
 rm yarn-v$YARN_VERSION.tar.gz
 EOF
 
+# https://github.com/FooBarWidget/matchhostfsowner
+ADD https://github.com/FooBarWidget/matchhostfsowner/releases/download/v1.0.1/matchhostfsowner-1.0.1-x86_64-linux.gz /sbin/matchhostfsowner.gz
+COPY --chmod=0700 --chown=0:0 mhf-config.yml /etc/matchhostfsowner/config.yml
+
 # Set up a user
 RUN <<EOF
 rm -rf /home
@@ -88,13 +92,16 @@ adduser --disabled-password --gecos 'CSCI 46 User' --uid 2000 --gid 2000 --home 
 echo "%cs46 ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 # Set timezone
 ln -sf /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
+
+# Set up script to match host username
+gunzip /sbin/matchhostfsowner.gz
+chown root: /sbin/matchhostfsowner
+chmod +x /sbin/matchhostfsowner
 EOF
 
 # Add welcome message
 COPY --chown=2000:2000 WELCOME.md /home/
 
-
-USER cs46
 WORKDIR /home
 
-ENTRYPOINT ["/bin/bash", "-l"]
+ENTRYPOINT ["/sbin/matchhostfsowner"]
